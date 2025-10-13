@@ -6,7 +6,6 @@ import 'screens/splash.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // ✅ Inicializa Firebase con las opciones correctas
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
