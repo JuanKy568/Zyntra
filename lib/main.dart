@@ -6,9 +6,17 @@ import 'screens/splash.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } else {
+      Firebase.app(); // usa la instancia ya existente
+    }
+  } catch (e) {
+    Firebase.app(); // fallback si ya está inicializado
+  }
   
   runApp(const KraftDriveApp());
 }
