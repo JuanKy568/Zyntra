@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "476270007605",
+    "project_id": "kraft-drive-be628",
+    "storage_bucket": "kraft-drive-be628.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:476270007605:android:740d1e997a72c67cf1a87c",
+        "android_client_info": {
+          "package_name": "com.example.kraft_drive"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0nUt_vfnFzuoQoUi_P_rNZC4YNEThT5w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
