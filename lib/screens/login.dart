@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../widgets/custom_text_field.dart';
-import 'RegisterScreen.dart'; // 👈 Asegúrate de importar tu pantalla de registro
+import 'RegisterScreen.dart';
+import 'UserDashboardScreen.dart'; // 🔹 Importamos la nueva pantalla del usuario
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,8 +32,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Inicio de sesión exitoso ✅')),
         );
-        // Aquí puedes redirigir a tu dashboard
-        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const DashboardScreen()));
+
+        // 🔹 Redirige al Dashboard del usuario
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const UserDashboardScreen()),
+        );
       }
     } on FirebaseAuthException catch (e) {
       String message = 'Error al iniciar sesión';
@@ -48,19 +53,45 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0A0A0F),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.all(28.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.directions_car, size: 90, color: Colors.blueAccent),
-              const SizedBox(height: 16),
-              const Text(
-                'Kraft Drive',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [Color(0xFF7A00FF), Color(0xFF00D1FF)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds),
+                child: const Icon(
+                  Icons.fitness_center,
+                  size: 100,
+                  color: Colors.white,
+                ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 18),
+              const Text(
+                'ZYNTRA',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2,
+                  color: Color(0xFF9B4DFF),
+                  shadows: [
+                    Shadow(
+                      color: Color(0xFF00E5FF),
+                      blurRadius: 20,
+                      offset: Offset(0, 0),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 40),
+
+              // 🔹 Formulario de login
               Form(
                 key: _formKey,
                 child: Column(
@@ -90,29 +121,40 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+
+              const SizedBox(height: 40),
+
+              // 🔹 Botón de inicio de sesión
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _login,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: const Color(0xFF7A00FF),
+                    shadowColor: const Color(0xFF00E5FF),
+                    elevation: 10,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
                           'INICIAR SESIÓN',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: 1.2,
+                          ),
                         ),
                 ),
               ),
 
-              // 🔹 BOTÓN AÑADIDO AQUÍ 🔹
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
+
+              // 🔹 Botón para ir al registro
               TextButton(
                 onPressed: () {
                   Navigator.push(
@@ -122,7 +164,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
                 child: const Text(
                   '¿No tienes cuenta? Regístrate aquí',
-                  style: TextStyle(color: Colors.blueAccent, fontSize: 15),
+                  style: TextStyle(
+                    color: Color(0xFF00E5FF),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    shadows: [
+                      Shadow(
+                        color: Color(0xFF7A00FF),
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
