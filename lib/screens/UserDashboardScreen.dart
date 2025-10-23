@@ -5,6 +5,7 @@ import 'settings_screen.dart';
 import 'login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'chat_screen.dart';
 
 class UserDashboardScreen extends StatefulWidget {
   const UserDashboardScreen({super.key});
@@ -161,7 +162,16 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
               runSpacing: 10,
               alignment: WrapAlignment.center,
               children: [
-                _buildActionButton(Icons.fitness_center, 'Entrenamientos'),
+                _buildActionButton(
+                  Icons.fitness_center,
+                  'Entrenamientos',
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ChatScreen()),
+                    );
+                  },
+                ),
                 _buildActionButton(Icons.show_chart, 'Progreso'),
                 _buildActionButton(Icons.store, 'Tienda'),
                 _buildActionButton(Icons.settings, 'Configuración', () async {
