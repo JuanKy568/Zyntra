@@ -19,6 +19,8 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
   String height = '';
   String weight = '';
   String level = '';
+  String avatarPath = 'assets/recluta.glb';
+  Key avatarKey = UniqueKey(); // 🔹 clave única para forzar recarga del avatar
 
   @override
   void initState() {
@@ -26,26 +28,54 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
     _loadUserData();
   }
 
+  /// 🔹 Carga datos del usuario y actualiza avatar según nivel
   Future<void> _loadUserData() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    final doc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .get();
+    final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
 
     if (doc.exists) {
+      final data = doc.data()!;
       setState(() {
-        name = doc['name'];
-        age = doc['age'].toString();
-        height = doc['height'].toString();
-        weight = doc['weight'].toString();
-        level = doc['level'];
+        name = data['name'] ?? '';
+        age = data['age']?.toString() ?? '';
+        height = data['height']?.toString() ?? '';
+        weight = data['weight']?.toString() ?? '';
+        level = data['level'] ?? 'Recluta';
+        avatarPath = _getAvatarPath(level);
+        avatarKey = UniqueKey(); // 🔹 cambia la clave para recargar el modelo
       });
     }
   }
 
+  /// 🔹 Devuelve el modelo .glb según el nivel del usuario
+  String _getAvatarPath(String level) {
+    switch (level.toLowerCase()) {
+      case 'recluta':
+        return 'assets/recluta.glb';
+      case 'cadete':
+        return 'assets/cadete.glb';
+      case 'guerrero':
+        return 'assets/guerrero.glb';
+      case 'gladiador':
+        return 'assets/gladiador.glb';
+      case 'élite':
+      case 'elite':
+        return 'assets/elite.glb';
+      case 'maestro':
+        return 'assets/maestro.glb';
+      case 'titán':
+      case 'titan':
+        return 'assets/titan.glb';
+      case 'leyenda':
+        return 'assets/leyenda.glb';
+      default:
+        return 'assets/recluta.glb';
+    }
+  }
+
+  /// 🔹 Cerrar sesión
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
@@ -81,11 +111,13 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // 🔹 Avatar dinámico con recarga visual forzada
             SizedBox(
               height: 300,
               child: ModelViewer(
-                src: 'assets/avocadoCharacter.glb',
-                alt: "Avatar del usuario",
+                key: avatarKey, // 👈 esta clave fuerza que el widget se reconstruya
+                src: avatarPath,
+                alt: "Avatar del usuario ($level)",
                 autoRotate: true,
                 cameraControls: true,
                 backgroundColor: Colors.transparent,
@@ -137,15 +169,15 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                     context,
                     MaterialPageRoute(builder: (_) => const SettingsScreen()),
                   );
+
+                  // 🔹 Si el usuario guardó cambios, recargamos datos y avatar
                   if (result == true) {
-                    _loadUserData();
+                    await _loadUserData();
                   }
                 }),
               ],
             ),
             const SizedBox(height: 30),
-
-            // 🔴 BOTÓN DE CERRAR SESIÓN gg
             ElevatedButton.icon(
               onPressed: _logout,
               style: ElevatedButton.styleFrom(
@@ -204,7 +236,8 @@ class InfoRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label,
-              style: TextStyle(color: colorScheme.onBackground.withOpacity(0.7))),
+              style:
+                  TextStyle(color: colorScheme.onBackground.withOpacity(0.7))),
           Text(value, style: TextStyle(color: colorScheme.onBackground)),
         ],
       ),

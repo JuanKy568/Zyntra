@@ -20,7 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
 
-  String _selectedLevel = 'Principiante';
+  String _selectedLevel = 'Recluta';
   bool _isLoading = false;
 
   Future<void> _saveUserData({
@@ -178,7 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _heightController,
-                      label: 'Altura (cm)',
+                      label: 'Altura (m)',
                       icon: Icons.height,
                       validator: (value) {
                         if (value!.isEmpty) return 'Ingrese su altura';
@@ -214,12 +214,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           isDark ? const Color(0xFF1A1A1F) : Colors.white,
                       items: const [
                         DropdownMenuItem(
-                            value: 'Principiante',
-                            child: Text('Principiante')),
+                            value: 'Recluta', child: Text('Recluta')),
                         DropdownMenuItem(
-                            value: 'Intermedio', child: Text('Intermedio')),
+                            value: 'Cadete', child: Text('Cadete')),
                         DropdownMenuItem(
-                            value: 'Avanzado', child: Text('Avanzado')),
+                            value: 'Guerrero', child: Text('Guerrero')),
+                        DropdownMenuItem(
+                            value: 'Gladiador', child: Text('Gladiador')),
+                        DropdownMenuItem(
+                            value: 'Élite', child: Text('Élite')),
+                        DropdownMenuItem(
+                            value: 'Maestro', child: Text('Maestro')),
+                        DropdownMenuItem(
+                            value: 'Titán', child: Text('Titán')),
+                        DropdownMenuItem(
+                            value: 'Leyenda', child: Text('Leyenda')),
                       ],
                       onChanged: (value) {
                         setState(() => _selectedLevel = value!);

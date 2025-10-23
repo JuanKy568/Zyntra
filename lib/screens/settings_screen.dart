@@ -17,14 +17,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final _ageController = TextEditingController();
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
-  String _selectedLevel = 'Intermedio';
+  String _selectedLevel = 'Recluta';
 
   bool _isLoading = true;
 
   final List<String> _levels = [
-    'Principiante',
-    'Intermedio',
-    'Avanzado',
+    'Recluta',
+    'Cadete',
+    'Guerrero',
+    'Gladiador',
+    'Élite',
+    'Maestro',
+    'Titán',
+    'Leyenda',
   ];
 
   @override
@@ -38,8 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
 
-      final doc =
-          await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
 
       if (doc.exists) {
         final data = doc.data()!;
@@ -48,7 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _ageController.text = data['age'] ?? '';
           _heightController.text = data['height'] ?? '';
           _weightController.text = data['weight'] ?? '';
-          _selectedLevel = data['level'] ?? 'Intermedio';
+          _selectedLevel = data['level'] ?? 'Recluta';
         });
       }
     } catch (e) {
@@ -92,7 +96,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    //final textColor = theme.textTheme.bodyMedium?.color;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -109,14 +112,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: ListView(
                   children: [
                     _buildTextField('Nombre', _nameController, theme),
-                    _buildTextField('Edad', _ageController, theme,
-                        keyboard: TextInputType.number),
-                    _buildTextField('Altura (m)', _heightController, theme,
-                        keyboard: TextInputType.number),
-                    _buildTextField('Peso (kg)', _weightController, theme,
-                        keyboard: TextInputType.number),
+                    _buildTextField('Edad', _ageController, theme, keyboard: TextInputType.number),
+                    _buildTextField('Altura (m)', _heightController, theme, keyboard: TextInputType.number),
+                    _buildTextField('Peso (kg)', _weightController, theme, keyboard: TextInputType.number),
                     const SizedBox(height: 8),
-                    _buildDropdownField('Nivel', theme),
+                    _buildDropdownField('Nivel de entrenamiento', theme),
                     const SizedBox(height: 20),
                     ElevatedButton.icon(
                       onPressed: _saveUserData,
@@ -156,6 +156,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: textColor?.withOpacity(0.7)),
+          filled: true,
+          fillColor: theme.brightness == Brightness.dark
+              ? const Color(0xFF1A1A1F)
+              : Colors.grey.shade200,
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: theme.dividerColor),
             borderRadius: BorderRadius.circular(12),
@@ -165,8 +169,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        validator: (value) =>
-            value == null || value.isEmpty ? 'Campo requerido' : null,
+        validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
       ),
     );
   }
@@ -183,6 +186,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: textColor?.withOpacity(0.7)),
+          filled: true,
+          fillColor: theme.brightness == Brightness.dark
+              ? const Color(0xFF1A1A1F)
+              : Colors.grey.shade200,
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: theme.dividerColor),
             borderRadius: BorderRadius.circular(12),

@@ -65,7 +65,14 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
-    - assets/avocadoCharacter.glb
+    - assets/recluta.glb
+    - assets/cadete.glb
+    - assets/guerrero.glb
+    - assets/gladiador.glb
+    - assets/elite.glb
+    - assets/maestro.glb
+    - assets/titan.glb
+    - assets/leyenda.glb
 
   # To add assets to your application, add an assets section, like this:
   # assets:
