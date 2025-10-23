@@ -53,11 +53,19 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final backgroundColor = theme.scaffoldBackgroundColor;
+    final textColor = isDark ? Colors.grey[300] : Colors.grey[800];
+    final primaryGlow = isDark ? const Color(0xFF7A00FF) : const Color(0xFF6200EA);
+    final secondaryGlow = isDark ? const Color(0xFF00E5FF) : const Color(0xFF03A9F4);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0F), // Negro profundo
+      backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          // 🔹 LOGO centrado perfectamente
+          // 🔹 LOGO con efecto de brillo
           Center(
             child: ScaleTransition(
               scale: Tween<double>(begin: 0.95, end: 1.0).animate(
@@ -74,8 +82,8 @@ class _SplashScreenState extends State<SplashScreen>
                       boxShadow: [
                         BoxShadow(
                           color: Color.lerp(
-                            const Color(0xFF7A00FF),
-                            const Color(0xFF00E5FF),
+                            primaryGlow,
+                            secondaryGlow,
                             _glowAnimation.value,
                           )!
                               .withOpacity(0.6),
@@ -97,28 +105,28 @@ class _SplashScreenState extends State<SplashScreen>
             ),
           ),
 
-          // 🔹 Pie de página centrado horizontalmente
+          // 🔹 Texto inferior
           Positioned(
             bottom: 35,
             left: 0,
             right: 0,
             child: FadeTransition(
               opacity: _fadeAnimation,
-              child: const Text(
+              child: Text(
                 'Desarrollado por: Aguirre y Díaz',
-                textAlign: TextAlign.center, // ✅ Centrado
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Color(0xFFB0B0B0),
+                  color: textColor,
                   fontSize: 15,
                   fontStyle: FontStyle.italic,
                   letterSpacing: 0.8,
                   shadows: [
                     Shadow(
-                      color: Color(0xFF7A00FF),
+                      color: primaryGlow.withOpacity(0.8),
                       blurRadius: 10,
                     ),
                     Shadow(
-                      color: Color(0xFF00E5FF),
+                      color: secondaryGlow.withOpacity(0.8),
                       blurRadius: 6,
                     ),
                   ],

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'settings_screen.dart';
+import 'login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserDashboardScreen extends StatefulWidget {
   const UserDashboardScreen({super.key});
@@ -24,24 +27,54 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
   }
 
   Future<void> _loadUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    if (doc.exists) {
+      setState(() {
+        name = doc['name'];
+        age = doc['age'].toString();
+        height = doc['height'].toString();
+        weight = doc['weight'].toString();
+        level = doc['level'];
+      });
+    }
+  }
+
+  Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      name = prefs.getString('name') ?? 'Juan Díaz';
-      age = prefs.getString('age') ?? '25';
-      height = prefs.getString('height') ?? '1.75';
-      weight = prefs.getString('weight') ?? '72';
-      level = prefs.getString('level') ?? 'Intermedio';
-    });
+    await prefs.clear();
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.black87,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 50, 38, 38),
-        title: const Text('Mi Gimnasio Virtual'),
+        backgroundColor: colorScheme.primary.withOpacity(isDark ? 0.2 : 0.1),
+        title: Text(
+          'Mi Gimnasio Virtual',
+          style: TextStyle(
+            color: colorScheme.onBackground,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
+        elevation: 2,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -60,20 +93,22 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
             ),
             const SizedBox(height: 20),
             Card(
-              color: Colors.grey[850],
+              color: isDark
+                  ? const Color(0xFF1E1E24)
+                  : Colors.grey.shade100,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              elevation: 8,
+              elevation: 6,
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Información del Usuario',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: colorScheme.primary,
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
@@ -103,10 +138,29 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                     MaterialPageRoute(builder: (_) => const SettingsScreen()),
                   );
                   if (result == true) {
-                    _loadUserData(); // Actualiza los datos al volver
+                    _loadUserData();
                   }
                 }),
               ],
+            ),
+            const SizedBox(height: 30),
+
+            // 🔴 BOTÓN DE CERRAR SESIÓN
+            ElevatedButton.icon(
+              onPressed: _logout,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              icon: const Icon(Icons.logout, color: Colors.white),
+              label: const Text(
+                'Cerrar sesión',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
             ),
           ],
         ),
@@ -115,15 +169,20 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
   }
 
   Widget _buildActionButton(IconData icon, String label, [VoidCallback? onTap]) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        elevation: 5,
       ),
       onPressed: onTap,
-      icon: Icon(icon, color: Colors.white),
-      label: Text(label, style: const TextStyle(color: Colors.white)),
+      icon: Icon(icon),
+      label: Text(label),
     );
   }
 }
@@ -136,13 +195,17 @@ class InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white70)),
-          Text(value, style: const TextStyle(color: Colors.white)),
+          Text(label,
+              style: TextStyle(color: colorScheme.onBackground.withOpacity(0.7))),
+          Text(value, style: TextStyle(color: colorScheme.onBackground)),
         ],
       ),
     );
