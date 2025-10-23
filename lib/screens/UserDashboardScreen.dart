@@ -145,7 +145,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
             ),
             const SizedBox(height: 30),
 
-            // 🔴 BOTÓN DE CERRAR SESIÓN
+            // 🔴 BOTÓN DE CERRAR SESIÓN gg
             ElevatedButton.icon(
               onPressed: _logout,
               style: ElevatedButton.styleFrom(
