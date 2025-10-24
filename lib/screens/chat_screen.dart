@@ -15,12 +15,12 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> messages = [];
   bool loading = false;
-  Map<String, dynamic>? userData; // 🔹 Aquí guardaremos los datos del usuario
+  Map<String, dynamic>? userData;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData(); // Cargar datos del usuario al iniciar
+    _loadUserData();
   }
 
   Future<void> _loadUserData() async {
@@ -38,7 +38,6 @@ class _ChatScreenState extends State<ChatScreen> {
           userData = doc.data();
         });
 
-        // 🔹 Mensaje inicial de bienvenida personalizado
         messages.insert(0, {
           'role': 'bot',
           'text': '¡Hola ${userData!['name']}! 👋 Soy ZyntraCoach, tu entrenador virtual. '
@@ -60,7 +59,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.0.9:3000/api/chat'), // Usa tu IP
+        Uri.parse('http://192.168.0.9:3000/chat'), // ✅ ruta correcta
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           "message": text,
@@ -81,12 +80,15 @@ class _ChatScreenState extends State<ChatScreen> {
         });
       } else {
         setState(() {
-          messages.insert(0, {'role': 'bot', 'text': 'Error al conectarse con el servidor'});
+          messages.insert(0, {
+            'role': 'bot',
+            'text': '❌ Error ${response.statusCode}: No se pudo conectar con el servidor.'
+          });
         });
       }
     } catch (e) {
       setState(() {
-        messages.insert(0, {'role': 'bot', 'text': 'Error: $e'});
+        messages.insert(0, {'role': 'bot', 'text': '⚠️ Error: $e'});
       });
     } finally {
       setState(() => loading = false);
@@ -101,7 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Colors.deepPurpleAccent,
       ),
       body: userData == null
-          ? const Center(child: CircularProgressIndicator()) // ⏳ Espera datos
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
                 Expanded(
@@ -113,19 +115,25 @@ class _ChatScreenState extends State<ChatScreen> {
                       final isUser = m['role'] == 'user';
                       return Container(
                         padding: const EdgeInsets.all(8),
-                        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                        alignment:
+                            isUser ? Alignment.centerRight : Alignment.centerLeft,
                         child: Container(
                           constraints: BoxConstraints(
-                              maxWidth: MediaQuery.of(context).size.width * 0.75),
+                            maxWidth:
+                                MediaQuery.of(context).size.width * 0.75,
+                          ),
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: isUser ? Colors.deepPurpleAccent : Colors.grey[200],
+                            color: isUser
+                                ? Colors.deepPurpleAccent
+                                : Colors.grey[200],
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             m['text']!,
                             style: TextStyle(
-                                color: isUser ? Colors.white : Colors.black87),
+                              color: isUser ? Colors.white : Colors.black87,
+                            ),
                           ),
                         ),
                       );
@@ -140,8 +148,10 @@ class _ChatScreenState extends State<ChatScreen> {
                         child: TextField(
                           controller: _controller,
                           decoration: const InputDecoration(
-                            hintText: 'Escribe tu pregunta sobre entrenamiento o dieta...',
-                            contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                            hintText:
+                                'Escribe tu pregunta sobre entrenamiento o dieta...',
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 12),
                           ),
                           onSubmitted: (value) {
                             final text = _controller.text;
@@ -151,13 +161,14 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.send, color: Colors.deepPurpleAccent),
+                        icon: const Icon(Icons.send,
+                            color: Colors.deepPurpleAccent),
                         onPressed: () {
                           final text = _controller.text;
                           _controller.clear();
                           sendMessage(text);
                         },
-                      )
+                      ),
                     ],
                   ),
                 ),
