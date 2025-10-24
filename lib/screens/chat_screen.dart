@@ -40,8 +40,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
         messages.insert(0, {
           'role': 'bot',
-          'text': '¡Hola ${userData!['name']}! 👋 Soy ZyntraCoach, tu entrenador virtual. '
-              'Estoy listo para ayudarte con tus rutinas y nutrición.'
+          'text':
+              '¡Hola ${userData?['name']}! 👋 Soy ZyntraCoach, tu entrenador virtual. Estoy listo para ayudarte con tus rutinas y nutrición.'
         });
       }
     } catch (e) {
@@ -59,7 +59,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.0.9:3000/chat'), // ✅ ruta correcta
+        Uri.parse('https://zyntra-backend-oetw.onrender.com/chat'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           "message": text,
@@ -82,7 +82,8 @@ class _ChatScreenState extends State<ChatScreen> {
         setState(() {
           messages.insert(0, {
             'role': 'bot',
-            'text': '❌ Error ${response.statusCode}: No se pudo conectar con el servidor.'
+            'text':
+                '❌ Error ${response.statusCode}: No se pudo conectar con el servidor.'
           });
         });
       }
@@ -115,8 +116,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       final isUser = m['role'] == 'user';
                       return Container(
                         padding: const EdgeInsets.all(8),
-                        alignment:
-                            isUser ? Alignment.centerRight : Alignment.centerLeft,
+                        alignment: isUser
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
                         child: Container(
                           constraints: BoxConstraints(
                             maxWidth:
