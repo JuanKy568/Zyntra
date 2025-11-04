@@ -3,9 +3,13 @@ import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'settings_screen.dart';
 import 'login.dart';
+import 'store_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'chat_screen.dart';
+import '../l10n/app_localizations.dart';
+import 'progress_screen.dart';
+
 
 class UserDashboardScreen extends StatefulWidget {
   const UserDashboardScreen({super.key});
@@ -21,7 +25,9 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
   String weight = '';
   String level = '';
   String avatarPath = 'assets/recluta.glb';
-  Key avatarKey = UniqueKey(); // 🔹 clave única para forzar recarga del avatar
+  List<String> ownedItems = [];
+
+  Key avatarKey = UniqueKey();
 
   @override
   void initState() {
@@ -29,12 +35,13 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
     _loadUserData();
   }
 
-  /// 🔹 Carga datos del usuario y actualiza avatar según nivel
+  /// 🔹 Cargar datos del usuario desde Firestore
   Future<void> _loadUserData() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
 
     if (doc.exists) {
       final data = doc.data()!;
@@ -44,15 +51,22 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
         height = data['height']?.toString() ?? '';
         weight = data['weight']?.toString() ?? '';
         level = data['level'] ?? 'Recluta';
+        ownedItems = List<String>.from(data['ownedItems'] ?? []);
         avatarPath = _getAvatarPath(level);
-        avatarKey = UniqueKey(); // 🔹 cambia la clave para recargar el modelo
+        avatarKey = UniqueKey();
       });
     }
   }
 
-  /// 🔹 Devuelve el modelo .glb según el nivel del usuario
+  /// 🔹 Devuelve el modelo base según el nivel o avatar VIP
   String _getAvatarPath(String level) {
     switch (level.toLowerCase()) {
+      case 'vip1':
+        return 'assets/store/vip1.glb';
+      case 'vip2':
+        return 'assets/store/vip2.glb';
+      case 'vip3':
+        return 'assets/store/vip3.glb';
       case 'recluta':
         return 'assets/recluta.glb';
       case 'cadete':
@@ -87,18 +101,98 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
     );
   }
 
+  /// 🔹 Widget combinado del avatar, VIP y accesorios
+  Widget _buildAvatarWithAccessories() {
+    List<Widget> models = [];
+
+    // 🧍 Modelo base o VIP activo
+    models.add(
+      Positioned.fill(
+        child: ModelViewer(
+          key: avatarKey,
+          src: avatarPath,
+          alt: "Avatar del usuario ($level)",
+          autoRotate: true,
+          cameraControls: true,
+          backgroundColor: Colors.transparent,
+        ),
+      ),
+    );
+
+    // 👑 Corona (izquierda)
+    if (ownedItems.contains('gripGloves')) {
+      models.add(Positioned(
+        top: 60,
+        left: 30,
+        height: 120,
+        width: 120,
+        child: ModelViewer(
+          src: 'assets/store/obj1.glb',
+          alt: "Corona lateral",
+          autoRotate: false,
+          cameraControls: false,
+          backgroundColor: Colors.transparent,
+        ),
+      ));
+    }
+
+    // 🧞 Alfombra (debajo)
+    if (ownedItems.contains('powerBelt')) {
+      models.add(Positioned(
+        bottom: -40,
+        left: 40,
+        right: 40,
+        height: 100,
+        child: ModelViewer(
+          src: 'assets/store/obj2.glb',
+          alt: "Alfombra mágica",
+          autoRotate: false,
+          cameraControls: false,
+          backgroundColor: Colors.transparent,
+        ),
+      ));
+    }
+
+    // 🎮 Control gamer (derecha)
+    if (ownedItems.contains('nonSlipBoots')) {
+      models.add(Positioned(
+        right: 10,
+        bottom: 40,
+        height: 100,
+        width: 100,
+        child: ModelViewer(
+          src: 'assets/store/obj3.glb',
+          alt: "Control gamer",
+          autoRotate: false,
+          cameraControls: false,
+          backgroundColor: Colors.transparent,
+        ),
+      ));
+    }
+
+    return SizedBox(
+      height: 350,
+      child: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: models,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: colorScheme.primary.withOpacity(isDark ? 0.2 : 0.1),
         title: Text(
-          'Mi Gimnasio Virtual',
+          loc.gymTitle,
           style: TextStyle(
             color: colorScheme.onBackground,
             fontWeight: FontWeight.bold,
@@ -112,23 +206,13 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // 🔹 Avatar dinámico con recarga visual forzada
-            SizedBox(
-              height: 300,
-              child: ModelViewer(
-                key: avatarKey, // 👈 esta clave fuerza que el widget se reconstruya
-                src: avatarPath,
-                alt: "Avatar del usuario ($level)",
-                autoRotate: true,
-                cameraControls: true,
-                backgroundColor: Colors.transparent,
-              ),
-            ),
+            // 🔹 Avatar con accesorios o VIP
+            _buildAvatarWithAccessories(),
             const SizedBox(height: 20),
+
+            // 🔹 Tarjeta de información del usuario
             Card(
-              color: isDark
-                  ? const Color(0xFF1E1E24)
-                  : Colors.grey.shade100,
+              color: isDark ? const Color(0xFF1E1E24) : Colors.grey.shade100,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -139,7 +223,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Información del Usuario',
+                      loc.userInfo,
                       style: TextStyle(
                         color: colorScheme.primary,
                         fontSize: 22,
@@ -147,16 +231,21 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    InfoRow(label: "Nombre", value: name),
-                    InfoRow(label: "Edad", value: "$age años"),
-                    InfoRow(label: "Altura", value: "$height m"),
-                    InfoRow(label: "Peso", value: "$weight kg"),
-                    InfoRow(label: "Nivel", value: level),
+                    InfoRow(label: loc.name, value: name),
+                    InfoRow(label: loc.age, value: "$age ${loc.years}"),
+                    InfoRow(label: loc.height, value: "$height m"),
+                    InfoRow(label: loc.weight, value: "$weight kg"),
+                    InfoRow(
+                      label: loc.level,
+                      value: _getLevelDisplayName(level),
+                    ),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 20),
+
+            // 🔹 Botones de acciones
             Wrap(
               spacing: 10,
               runSpacing: 10,
@@ -164,7 +253,7 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
               children: [
                 _buildActionButton(
                   Icons.fitness_center,
-                  'Entrenamientos',
+                  loc.trainings,
                   () {
                     Navigator.push(
                       context,
@@ -172,21 +261,37 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                     );
                   },
                 ),
-                _buildActionButton(Icons.show_chart, 'Progreso'),
-                _buildActionButton(Icons.store, 'Tienda'),
-                _buildActionButton(Icons.settings, 'Configuración', () async {
+                _buildActionButton(
+                  Icons.show_chart,
+                  loc.progress,
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProgressScreen()),
+                    );
+                  },
+                ),
+                _buildActionButton(
+                  Icons.store,
+                  loc.store,
+                  () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const StoreScreen()),
+                    );
+                    await _loadUserData(); // 🔄 recargar tras comprar
+                  },
+                ),
+                _buildActionButton(Icons.settings, loc.settings, () async {
                   final result = await Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const SettingsScreen()),
                   );
-
-                  // 🔹 Si el usuario guardó cambios, recargamos datos y avatar
-                  if (result == true) {
-                    await _loadUserData();
-                  }
+                  if (result == true) await _loadUserData();
                 }),
               ],
             ),
+
             const SizedBox(height: 30),
             ElevatedButton.icon(
               onPressed: _logout,
@@ -199,15 +304,29 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                 ),
               ),
               icon: const Icon(Icons.logout, color: Colors.white),
-              label: const Text(
-                'Cerrar sesión',
-                style: TextStyle(color: Colors.white, fontSize: 16),
+              label: Text(
+                loc.logout,
+                style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  /// 🔹 Mostrar nombre legible del nivel VIP o normal
+  String _getLevelDisplayName(String lvl) {
+    switch (lvl.toLowerCase()) {
+      case 'vip1':
+        return 'VIP 1 (Titán Dorado)';
+      case 'vip2':
+        return 'VIP 2 (Guerrero Cibernético)';
+      case 'vip3':
+        return 'VIP 3 (Maestro del Poder)';
+      default:
+        return lvl;
+    }
   }
 
   Widget _buildActionButton(IconData icon, String label, [VoidCallback? onTap]) {
@@ -245,10 +364,14 @@ class InfoRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style:
-                  TextStyle(color: colorScheme.onBackground.withOpacity(0.7))),
-          Text(value, style: TextStyle(color: colorScheme.onBackground)),
+          Text(
+            label,
+            style: TextStyle(color: colorScheme.onBackground.withOpacity(0.7)),
+          ),
+          Text(
+            value,
+            style: TextStyle(color: colorScheme.onBackground),
+          ),
         ],
       ),
     );

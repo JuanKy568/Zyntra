@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart'; // 👈 Importante
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'screens/splash.dart';
-import 'providers/theme_provider.dart'; 
+import 'providers/theme_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
+    // Inicializar Firebase
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
@@ -16,6 +20,9 @@ void main() async {
     } else {
       Firebase.app();
     }
+
+    // 👇 Inicializar Google Mobile Ads (recompensas)
+    await MobileAds.instance.initialize();
   } catch (e) {
     Firebase.app();
   }
@@ -35,6 +42,7 @@ class KraftDriveApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
+    // 🎨 Tema claro
     final lightTheme = ThemeData.light(useMaterial3: true).copyWith(
       colorScheme: const ColorScheme.light(
         primary: Color(0xFF7A00FF),
@@ -68,6 +76,7 @@ class KraftDriveApp extends StatelessWidget {
       ),
     );
 
+    // 🌙 Tema oscuro
     final darkTheme = ThemeData.dark(useMaterial3: true).copyWith(
       colorScheme: const ColorScheme.dark(
         primary: Color(0xFF7A00FF),
@@ -111,6 +120,18 @@ class KraftDriveApp extends StatelessWidget {
         theme: lightTheme,
         darkTheme: darkTheme,
         home: const SplashScreen(),
+
+        // 🌍 Internacionalización
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('es'),
+        ],
       ),
     );
   }

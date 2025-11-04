@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login.dart';
+import '../l10n/app_localizations.dart'; // 👈 Import de traducciones
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -55,6 +56,7 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final loc = AppLocalizations.of(context)!; // 👈 acceso a traducciones
 
     final backgroundColor = theme.scaffoldBackgroundColor;
     final textColor = isDark ? Colors.grey[300] : Colors.grey[800];
@@ -113,7 +115,7 @@ class _SplashScreenState extends State<SplashScreen>
             child: FadeTransition(
               opacity: _fadeAnimation,
               child: Text(
-                'Desarrollado por: Aguirre y Díaz',
+                loc.developedBy, // 👈 texto traducido
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: textColor,

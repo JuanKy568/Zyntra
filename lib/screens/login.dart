@@ -7,6 +7,7 @@ import '../providers/theme_provider.dart';
 import '../widgets/custom_text_field.dart';
 import 'RegisterScreen.dart';
 import 'UserDashboardScreen.dart';
+import '../l10n/app_localizations.dart'; // Import para traducciones
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,7 +23,10 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  /// 🔹 Inicia sesión con validación y manejo seguro de Firestore
   Future<void> _login() async {
+    final loc = AppLocalizations.of(context)!;
+
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
 
@@ -35,41 +39,56 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = credential.user;
       if (user == null) throw FirebaseAuthException(code: 'no-user');
 
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+      final doc = await userDoc.get();
 
-      if (doc.exists) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('name', doc['name'] ?? '');
-        await prefs.setString('age', doc['age'] ?? '');
-        await prefs.setString('height', doc['height'] ?? '');
-        await prefs.setString('weight', doc['weight'] ?? '');
-        await prefs.setString('level', doc['level'] ?? '');
+      if (!doc.exists) {
+        // 🔹 Si no hay documento, crea uno básico para evitar errores
+        await userDoc.set({
+          'uid': user.uid,
+          'email': user.email,
+          'coins': 0,
+          'ownedItems': [],
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
 
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Inicio de sesión exitoso ✅')),
-          );
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const UserDashboardScreen()),
-          );
-        }
-      } else {
+      // 🔹 Asegura que todos los campos críticos existan
+      final data = (await userDoc.get()).data() ?? {};
+      final prefs = await SharedPreferences.getInstance();
+
+      await prefs.setString('name', data['name'] ?? '');
+      await prefs.setString('age', data['age']?.toString() ?? '');
+      await prefs.setString('height', data['height']?.toString() ?? '');
+      await prefs.setString('weight', data['weight']?.toString() ?? '');
+      await prefs.setString('level', data['level'] ?? '');
+      await prefs.setInt('coins', data['coins'] ?? 0);
+      await prefs.setStringList('ownedItems',
+          List<String>.from(data['ownedItems'] ?? <String>[]));
+
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No se encontraron datos del usuario en Firestore.'),
-          ),
+          SnackBar(content: Text(loc.loginSuccess)),
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const UserDashboardScreen()),
         );
       }
     } on FirebaseAuthException catch (e) {
-      String message = 'Error al iniciar sesión';
+      String message = loc.loginError;
       if (e.code == 'user-not-found') message = 'Usuario no encontrado';
       if (e.code == 'wrong-password') message = 'Contraseña incorrecta';
+      if (e.code == 'invalid-email') message = loc.invalidEmail;
+
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(message)));
+    } catch (e) {
+      debugPrint('Error al iniciar sesión: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error inesperado al iniciar sesión.')),
+      );
     } finally {
       setState(() => _isLoading = false);
     }
@@ -80,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -90,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // 🌙 / ☀️ Botón tema
+                // 🌙 / ☀️ Botón de cambio de tema
                 Align(
                   alignment: Alignment.topRight,
                   child: IconButton(
@@ -110,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
 
-                // 🏋️‍♂️ Logo con gradiente
+                // 🏋️‍♂️ Logo
                 ShaderMask(
                   shaderCallback: (bounds) => LinearGradient(
                     colors: [
@@ -129,7 +149,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 18),
 
-                // 🔹 Título ZYNTRA
                 Text(
                   'ZYNTRA',
                   style: TextStyle(
@@ -147,30 +166,30 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 40),
 
-                // 🔹 Formulario
+                // 🔹 Formulario de login
                 Form(
                   key: _formKey,
                   child: Column(
                     children: [
                       CustomTextField(
                         controller: _emailController,
-                        label: 'Correo electrónico',
+                        label: loc.email,
                         icon: Icons.email_outlined,
                         validator: (value) {
-                          if (value!.isEmpty) return 'Ingrese su correo';
-                          if (!value.contains('@')) return 'Correo inválido';
+                          if (value!.isEmpty) return loc.enterEmail;
+                          if (!value.contains('@')) return loc.invalidEmail;
                           return null;
                         },
                       ),
                       const SizedBox(height: 16),
                       CustomTextField(
                         controller: _passwordController,
-                        label: 'Contraseña',
+                        label: loc.password,
                         icon: Icons.lock_outline,
                         obscureText: true,
                         validator: (value) {
-                          if (value!.isEmpty) return 'Ingrese su contraseña';
-                          if (value.length < 6) return 'Mínimo 6 caracteres';
+                          if (value!.isEmpty) return loc.enterPassword;
+                          if (value.length < 6) return loc.minCharacters;
                           return null;
                         },
                       ),
@@ -180,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 40),
 
-                // 🔹 Botón de inicio de sesión
+                // 🔹 Botón principal
                 SizedBox(
                   width: double.infinity,
                   height: 50,
@@ -188,9 +207,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: _isLoading ? null : _login,
                     child: _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'INICIAR SESIÓN',
-                            style: TextStyle(
+                        : Text(
+                            loc.login.toUpperCase(),
+                            style: const TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.2,
@@ -201,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 20),
 
-                // 🔹 Ir al registro
+                // 🔹 Link a registro
                 TextButton(
                   onPressed: () {
                     Navigator.push(
@@ -210,7 +229,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
                   },
                   child: Text(
-                    '¿No tienes cuenta? Regístrate aquí',
+                    loc.noAccount,
                     style: TextStyle(
                       color: colorScheme.secondary,
                       fontSize: 15,

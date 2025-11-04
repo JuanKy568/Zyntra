@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/custom_text_field.dart';
+import '../l10n/app_localizations.dart'; // 🌎 Traducciones
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -23,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _selectedLevel = 'Recluta';
   bool _isLoading = false;
 
+  /// 🔹 Guarda los datos del usuario en Firestore
   Future<void> _saveUserData({
     required String name,
     required String age,
@@ -35,17 +37,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
       await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
         'uid': user.uid,
         'name': name,
-        'age': age,
-        'height': height,
-        'weight': weight,
+        'age': int.tryParse(age) ?? 0,
+        'height': double.tryParse(height) ?? 0.0,
+        'weight': double.tryParse(weight) ?? 0.0,
         'level': level,
         'email': user.email,
+        'coins': 0, // 💰 Monedas iniciales
+        'ownedItems': <String>[], // 🎒 Accesorios
+        'strengthExercises': <Map<String, dynamic>>[], // 🏋️‍♂️ Resistencia
+        'nutritionPlans': <Map<String, dynamic>>[], // 🥗 Dietas
+        'forceExercises': <Map<String, dynamic>>[], // 💪 Fuerza
+        'strengthProgress': 0.0,
+        'nutritionProgress': 0.0,
+        'forceProgress': 0.0,
+        // 🗓️ Campo nuevo: lista vacía de eventos planificados
+        'events': <Map<String, dynamic>>[],
         'createdAt': FieldValue.serverTimestamp(),
       });
     }
   }
 
+  /// 🔹 Registro del usuario con validaciones
   Future<void> _register() async {
+    final loc = AppLocalizations.of(context)!;
+
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
 
@@ -53,17 +68,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (_passwordController.text.trim() !=
           _confirmPasswordController.text.trim()) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Las contraseñas no coinciden ❌')),
+          SnackBar(content: Text(loc.passwordsDoNotMatch)),
         );
         setState(() => _isLoading = false);
         return;
       }
 
+      // 🔹 Crear usuario en Firebase Auth
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
+      // 🔹 Guardar datos en Firestore
       await _saveUserData(
         name: _nameController.text.trim(),
         age: _ageController.text.trim(),
@@ -74,18 +91,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Usuario registrado correctamente ✅')),
+          SnackBar(content: Text(loc.userRegistered)),
         );
         Navigator.pop(context);
       }
     } on FirebaseAuthException catch (e) {
-      String message = 'Error al registrar usuario';
+      String message = 'Error';
       if (e.code == 'email-already-in-use') {
         message = 'Este correo ya está registrado';
       } else if (e.code == 'invalid-email') {
-        message = 'Correo inválido';
+        message = loc.invalidEmail;
       } else if (e.code == 'weak-password') {
-        message = 'La contraseña es muy débil';
+        message = loc.minCharacters;
       }
 
       ScaffoldMessenger.of(context)
@@ -111,6 +128,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -134,7 +152,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 18),
               Text(
-                'CREAR CUENTA',
+                loc.createAccount.toUpperCase(),
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -144,56 +162,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Shadow(
                       color: theme.colorScheme.secondary.withOpacity(0.6),
                       blurRadius: 15,
-                      offset: const Offset(0, 0),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 40),
 
-              // 🔹 FORMULARIO
+              // 🔹 FORMULARIO DE REGISTRO
               Form(
                 key: _formKey,
                 child: Column(
                   children: [
                     CustomTextField(
                       controller: _nameController,
-                      label: 'Nombre completo',
+                      label: loc.fullName,
                       icon: Icons.person_outline,
-                      validator: (value) {
-                        if (value!.isEmpty) return 'Ingrese su nombre';
-                        return null;
-                      },
+                      validator: (value) =>
+                          value!.isEmpty ? loc.enterName : null,
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _ageController,
-                      label: 'Edad',
+                      label: loc.age,
                       icon: Icons.calendar_today_outlined,
-                      validator: (value) {
-                        if (value!.isEmpty) return 'Ingrese su edad';
-                        return null;
-                      },
+                      validator: (value) =>
+                          value!.isEmpty ? loc.enterAge : null,
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _heightController,
-                      label: 'Altura (m)',
+                      label: loc.height,
                       icon: Icons.height,
-                      validator: (value) {
-                        if (value!.isEmpty) return 'Ingrese su altura';
-                        return null;
-                      },
+                      validator: (value) =>
+                          value!.isEmpty ? loc.enterHeight : null,
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _weightController,
-                      label: 'Peso (kg)',
+                      label: loc.weight,
                       icon: Icons.fitness_center,
-                      validator: (value) {
-                        if (value!.isEmpty) return 'Ingrese su peso';
-                        return null;
-                      },
+                      validator: (value) =>
+                          value!.isEmpty ? loc.enterWeight : null,
                     ),
                     const SizedBox(height: 16),
 
@@ -201,7 +210,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     DropdownButtonFormField<String>(
                       value: _selectedLevel,
                       decoration: InputDecoration(
-                        labelText: 'Nivel de entrenamiento',
+                        labelText: loc.trainingLevel,
                         filled: true,
                         fillColor: isDark
                             ? const Color(0xFF1A1A1F)
@@ -212,23 +221,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       dropdownColor:
                           isDark ? const Color(0xFF1A1A1F) : Colors.white,
-                      items: const [
+                      items: [
                         DropdownMenuItem(
-                            value: 'Recluta', child: Text('Recluta')),
+                            value: 'Recluta', child: Text(loc.recruit)),
                         DropdownMenuItem(
-                            value: 'Cadete', child: Text('Cadete')),
+                            value: 'Cadete', child: Text(loc.cadet)),
                         DropdownMenuItem(
-                            value: 'Guerrero', child: Text('Guerrero')),
+                            value: 'Guerrero', child: Text(loc.warrior)),
                         DropdownMenuItem(
-                            value: 'Gladiador', child: Text('Gladiador')),
+                            value: 'Gladiador', child: Text(loc.gladiator)),
                         DropdownMenuItem(
-                            value: 'Élite', child: Text('Élite')),
+                            value: 'Élite', child: Text(loc.elite)),
                         DropdownMenuItem(
-                            value: 'Maestro', child: Text('Maestro')),
+                            value: 'Maestro', child: Text(loc.master)),
                         DropdownMenuItem(
-                            value: 'Titán', child: Text('Titán')),
+                            value: 'Titán', child: Text(loc.titan)),
                         DropdownMenuItem(
-                            value: 'Leyenda', child: Text('Leyenda')),
+                            value: 'Leyenda', child: Text(loc.legend)),
                       ],
                       onChanged: (value) {
                         setState(() => _selectedLevel = value!);
@@ -238,36 +247,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     CustomTextField(
                       controller: _emailController,
-                      label: 'Correo electrónico',
+                      label: loc.email,
                       icon: Icons.email_outlined,
                       validator: (value) {
-                        if (value!.isEmpty) return 'Ingrese su correo';
-                        if (!value.contains('@')) return 'Correo inválido';
+                        if (value!.isEmpty) return loc.enterEmail;
+                        if (!value.contains('@')) return loc.invalidEmail;
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _passwordController,
-                      label: 'Contraseña',
+                      label: loc.password,
                       icon: Icons.lock_outline,
                       obscureText: true,
                       validator: (value) {
-                        if (value!.isEmpty) return 'Ingrese una contraseña';
-                        if (value.length < 6) return 'Mínimo 6 caracteres';
+                        if (value!.isEmpty) return loc.enterPassword;
+                        if (value.length < 6) return loc.minCharacters;
                         return null;
                       },
                     ),
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _confirmPasswordController,
-                      label: 'Confirmar contraseña',
+                      label: loc.confirmPassword,
                       icon: Icons.lock_reset_outlined,
                       obscureText: true,
                       validator: (value) {
-                        if (value!.isEmpty) return 'Confirme su contraseña';
+                        if (value!.isEmpty) return loc.confirmYourPassword;
                         if (value != _passwordController.text) {
-                          return 'Las contraseñas no coinciden';
+                          return loc.passwordsDoNotMatch;
                         }
                         return null;
                       },
@@ -284,9 +293,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: _isLoading ? null : _register,
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'REGISTRARSE',
-                          style: TextStyle(
+                      : Text(
+                          loc.register.toUpperCase(),
+                          style: const TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
@@ -298,7 +307,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
-                  '¿Ya tienes cuenta? Inicia sesión',
+                  loc.alreadyHaveAccount,
                   style: TextStyle(
                     color: theme.colorScheme.secondary,
                     fontSize: 15,
