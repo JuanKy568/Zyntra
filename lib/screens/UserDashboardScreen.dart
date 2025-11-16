@@ -50,7 +50,20 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
         age = data['age']?.toString() ?? '';
         height = data['height']?.toString() ?? '';
         weight = data['weight']?.toString() ?? '';
-        level = data['level'] ?? 'Recluta';
+        final rawLevel = (data['level'] ?? 'recruit').toString().toLowerCase();
+        switch (rawLevel) {
+          case 'recluta': level = 'recruit'; break;
+          case 'cadete': level = 'cadet'; break;
+          case 'guerrero': level = 'warrior'; break;
+          case 'gladiador': level = 'gladiator'; break;
+          case 'élite':
+          case 'elite': level = 'elite'; break;
+          case 'maestro': level = 'master'; break;
+          case 'titán':
+          case 'titan': level = 'titan'; break;
+          case 'leyenda': level = 'legend'; break;
+          default: level = rawLevel;
+        }
         ownedItems = List<String>.from(data['ownedItems'] ?? []);
         avatarPath = _getAvatarPath(level);
         avatarKey = UniqueKey();
@@ -61,34 +74,60 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
   /// 🔹 Devuelve el modelo base según el nivel o avatar VIP
   String _getAvatarPath(String level) {
     switch (level.toLowerCase()) {
+
+      // 🔹 VIP levels (solo en inglés)
       case 'vip1':
         return 'assets/store/vip1.glb';
       case 'vip2':
         return 'assets/store/vip2.glb';
       case 'vip3':
         return 'assets/store/vip3.glb';
+
+      // 🔹 Recruit (recluta)
       case 'recluta':
+      case 'recruit':
         return 'assets/recluta.glb';
+
+      // 🔹 Cadet (cadete)
       case 'cadete':
+      case 'cadet':
         return 'assets/cadete.glb';
+
+      // 🔹 Warrior (guerrero)
       case 'guerrero':
+      case 'warrior':
         return 'assets/guerrero.glb';
+
+      // 🔹 Gladiator (gladiador)
       case 'gladiador':
+      case 'gladiator':
         return 'assets/gladiador.glb';
+
+      // 🔹 Elite (élite)
       case 'élite':
       case 'elite':
         return 'assets/elite.glb';
+
+      // 🔹 Master (maestro)
       case 'maestro':
+      case 'master':
         return 'assets/maestro.glb';
+
+      // 🔹 Titan (titán)
       case 'titán':
       case 'titan':
         return 'assets/titan.glb';
+
+      // 🔹 Legend (leyenda)
       case 'leyenda':
+      case 'legend':
         return 'assets/leyenda.glb';
+
       default:
         return 'assets/recluta.glb';
     }
-  }
+}
+
 
   /// 🔹 Cerrar sesión
   Future<void> _logout() async {
@@ -319,11 +358,11 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
   String _getLevelDisplayName(String lvl) {
     switch (lvl.toLowerCase()) {
       case 'vip1':
-        return 'VIP 1 (Titán Dorado)';
+        return 'VIP 1';
       case 'vip2':
-        return 'VIP 2 (Guerrero Cibernético)';
+        return 'VIP 2';
       case 'vip3':
-        return 'VIP 3 (Maestro del Poder)';
+        return 'VIP 3';
       default:
         return lvl;
     }

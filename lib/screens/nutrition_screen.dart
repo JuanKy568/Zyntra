@@ -1,6 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../l10n/app_localizations.dart';
+
+final Map<String, String Function(AppLocalizations loc)> nutritionKeys = {
+  "diet_name1": (loc) => loc.diet_name1,
+  "diet_desc1": (loc) => loc.diet_desc1,
+  "diet_name2": (loc) => loc.diet_name2,
+  "diet_desc2": (loc) => loc.diet_desc2,
+  "diet_name3": (loc) => loc.diet_name3,
+  "diet_desc3": (loc) => loc.diet_desc3,
+  "diet_name4": (loc) => loc.diet_name4,
+  "diet_desc4": (loc) => loc.diet_desc4,
+};
+
+String t(AppLocalizations loc, String key) {
+  return nutritionKeys[key]?.call(loc) ?? key;
+}
 
 class NutritionScreen extends StatefulWidget {
   const NutritionScreen({super.key});
@@ -11,35 +27,32 @@ class NutritionScreen extends StatefulWidget {
 
 class _NutritionScreenState extends State<NutritionScreen> {
   List<Map<String, dynamic>> diets = [
-    {
-      "name": "Dieta balanceada",
-      "description":
-          "Incluye frutas, verduras, proteínas magras y granos integrales. Ideal para mantener energía.",
-      "image": "assets/nutrition/balanced.png",
-      "increase": 0.07
-    },
-    {
-      "name": "Alta en proteínas",
-      "description":
-          "Basada en carnes magras, legumbres y huevos. Ideal para desarrollo muscular.",
-      "image": "assets/nutrition/protein.png",
-      "increase": 0.08
-    },
-    {
-      "name": "Vegana saludable",
-      "description":
-          "Enfocada en alimentos vegetales ricos en fibra y antioxidantes.",
-      "image": "assets/nutrition/vegan.png",
-      "increase": 0.06
-    },
-    {
-      "name": "Definición y bajo en calorías",
-      "description":
-          "Diseñada para reducir grasa corporal manteniendo masa muscular.",
-      "image": "assets/nutrition/lowcal.png",
-      "increase": 0.09
-    },
-  ];
+  {
+    "nameKey": "diet_name1",
+    "descKey": "diet_desc1",
+    "image": "assets/nutrition/balanced.png",
+    "increase": 0.07
+  },
+  {
+    "nameKey": "diet_name2",
+    "descKey": "diet_desc2",
+    "image": "assets/nutrition/protein.png",
+    "increase": 0.08
+  },
+  {
+    "nameKey": "diet_name3",
+    "descKey": "diet_desc3",
+    "image": "assets/nutrition/vegan.png",
+    "increase": 0.06
+  },
+  {
+    "nameKey": "diet_name4",
+    "descKey": "diet_desc4",
+    "image": "assets/nutrition/lowcal.png",
+    "increase": 0.09
+  },
+];
+
 
   double currentProgress = 0.0;
   int userCoins = 0;
@@ -104,6 +117,7 @@ class _NutritionScreenState extends State<NutritionScreen> {
   /// 🔹 Actualizar progreso con bonificación
   Future<void> _updateProgress(double increment) async {
     double newProgress = currentProgress + increment;
+    final loc = AppLocalizations.of(context)!;
     int earnedCoins = 0;
 
     // 🎯 Si llega o supera 100%
@@ -128,14 +142,14 @@ class _NutritionScreenState extends State<NutritionScreen> {
       if (earnedCoins > 0) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text("🎉 ¡Felicidades! Has ganado 100 puntos por tu progreso nutricional."),
+            content: Text(loc.nutrition_congrats),
             backgroundColor: Colors.amber.shade700,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("🥗 ¡Excelente! Tu progreso nutricional ha mejorado."),
+           SnackBar(
+            content: Text(loc.nutrition_improved),
             backgroundColor: Colors.green,
           ),
         );
@@ -150,28 +164,29 @@ class _NutritionScreenState extends State<NutritionScreen> {
     final nameController = TextEditingController();
     final descController = TextEditingController();
     final increaseController = TextEditingController();
+    final loc = AppLocalizations.of(context)!;
 
     await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          title: const Text("Agregar nueva dieta"),
+          title: Text(loc.nutrition_add_title),
           content: SingleChildScrollView(
             child: Column(
               children: [
                 TextField(
                   controller: nameController,
-                  decoration: const InputDecoration(labelText: "Nombre de la dieta"),
+                  decoration: InputDecoration(labelText: loc.nutrition_add_name),
                 ),
                 TextField(
                   controller: descController,
-                  decoration: const InputDecoration(labelText: "Descripción"),
+                  decoration: InputDecoration(labelText: loc.des_add),
                 ),
                 TextField(
                   controller: increaseController,
-                  decoration: const InputDecoration(
-                      labelText: "Aumento de progreso (0.01 - 0.2)"),
+                  decoration: InputDecoration(
+                      labelText: loc.aum_add),
                   keyboardType: TextInputType.number,
                 ),
               ],
@@ -180,7 +195,7 @@ class _NutritionScreenState extends State<NutritionScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancelar"),
+              child: Text(loc.btn_cancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -204,7 +219,7 @@ class _NutritionScreenState extends State<NutritionScreen> {
                 await _saveDietsToFirestore();
                 Navigator.pop(context);
               },
-              child: const Text("Agregar"),
+              child: Text(loc.btn_add),
             ),
           ],
         );
@@ -216,6 +231,7 @@ class _NutritionScreenState extends State<NutritionScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final loc = AppLocalizations.of(context)!;
 
     if (_loading) {
       return Scaffold(
@@ -228,7 +244,7 @@ class _NutritionScreenState extends State<NutritionScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorScheme.primary.withOpacity(0.1),
-        title: const Text("Planes de Nutrición"),
+        title: Text(loc.nutrition_title),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
@@ -252,7 +268,7 @@ class _NutritionScreenState extends State<NutritionScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Progreso Nutricional",
+                      loc.nutrition_progress,
                       style: TextStyle(
                         color: colorScheme.primary,
                         fontWeight: FontWeight.bold,
@@ -278,7 +294,7 @@ class _NutritionScreenState extends State<NutritionScreen> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "Monedas: $userCoins 🪙",
+                      "${loc.coins}: $userCoins 🪙",
                       style: TextStyle(
                         color: colorScheme.secondary,
                         fontWeight: FontWeight.w600,
@@ -311,19 +327,21 @@ class _NutritionScreenState extends State<NutritionScreen> {
                         backgroundColor: colorScheme.primary.withOpacity(0.1),
                       ),
                       title: Text(
-                        diet["name"],
+                        diet["nameKey"] != null
+                            ? t(loc, diet["nameKey"])
+                            : diet["name"], // <-- nombre directo si es custom
                         style: TextStyle(
                           color: colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          diet["description"],
-                          style: TextStyle(
-                            color: colorScheme.onBackground.withOpacity(0.8),
-                          ),
+
+                      subtitle: Text(
+                        diet["descKey"] != null
+                            ? t(loc, diet["descKey"])
+                            : diet["description"], // <-- descripción directa si es custom
+                        style: TextStyle(
+                          color: colorScheme.onBackground.withOpacity(0.8),
                         ),
                       ),
                       trailing: Column(

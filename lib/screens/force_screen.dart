@@ -1,6 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../l10n/app_localizations.dart';
+
+final Map<String, String Function(AppLocalizations loc)> forceKeys = {
+  "f_name1":  (loc) => loc.f_name1,
+  "f_desc1":  (loc) => loc.f_desc1,
+  "f_name2":  (loc) => loc.f_name2,
+  "f_desc2":  (loc) => loc.f_desc2,
+  "f_name3":  (loc) => loc.f_name3,
+  "f_desc3":  (loc) => loc.f_desc3,
+  "f_name4":  (loc) => loc.f_name4,
+  "f_desc4":  (loc) => loc.f_desc4,
+  "f_name5":  (loc) => loc.f_name5,
+  "f_desc5":  (loc) => loc.f_desc5,
+  "f_name6":  (loc) => loc.f_name6,
+  "f_desc6":  (loc) => loc.f_desc6,
+  "f_name7":  (loc) => loc.f_name7,
+  "f_desc7":  (loc) => loc.f_desc7,
+  "f_name8":  (loc) => loc.f_name8,
+  "f_desc8":  (loc) => loc.f_desc8,
+  "f_name9":  (loc) => loc.f_name9,
+  "f_desc9":  (loc) => loc.f_desc9,
+  "f_name10": (loc) => loc.f_name10,
+  "f_desc10": (loc) => loc.f_desc10,
+  "f_name11": (loc) => loc.f_name11,
+  "f_desc11": (loc) => loc.f_desc11,
+  "f_name12": (loc) => loc.f_name12,
+  "f_desc12": (loc) => loc.f_desc12,
+  "f_name13": (loc) => loc.f_name13,
+  "f_desc13": (loc) => loc.f_desc13,
+  "f_name14": (loc) => loc.f_name14,
+  "f_desc14": (loc) => loc.f_desc14,
+  "f_name15": (loc) => loc.f_name15,
+  "f_desc15": (loc) => loc.f_desc15,
+  "f_name16": (loc) => loc.f_name16,
+  "f_desc16": (loc) => loc.f_desc16,
+  "f_name17": (loc) => loc.f_name17,
+  "f_desc17": (loc) => loc.f_desc17,
+  "f_name18": (loc) => loc.f_name18,
+  "f_desc18": (loc) => loc.f_desc18,
+  "cat_chest": (loc) => loc.cat_chest,
+  "cat_back": (loc) => loc.cat_back,
+  "cat_biceps": (loc) => loc.cat_biceps,
+  "cat_triceps": (loc) => loc.cat_triceps,
+  "cat_forearm": (loc) => loc.cat_forearm,
+  "cat_abs": (loc) => loc.cat_abs,
+};
+
+String tForce(AppLocalizations loc, String key) {
+  return forceKeys[key]?.call(loc) ?? key;
+}
 
 class ForceScreen extends StatefulWidget {
   const ForceScreen({super.key});
@@ -18,16 +68,9 @@ class _ForceScreenState extends State<ForceScreen> {
   bool _loading = true;
   late String userId;
 
-  String selectedCategory = "Pecho";
+  String selectedCategory = "";
+  List<String> categories = [];
 
-  final List<String> categories = [
-    "Pecho",
-    "Espalda",
-    "Bíceps",
-    "Tríceps",
-    "Antebrazo",
-    "Abdomen",
-  ];
 
   @override
   void initState() {
@@ -48,136 +91,145 @@ class _ForceScreenState extends State<ForceScreen> {
           await FirebaseFirestore.instance.collection('users').doc(userId).get();
 
       List<Map<String, dynamic>> baseExercises = [
-        {
-          "name": "Press de banca",
-          "description": "Ejercicio clásico para desarrollar el pecho.",
-          "image": "assets/force/chest_press.png",
-          "increase": 0.07,
-          "category": "Pecho"
-        },
-        {
-          "name": "Flexiones",
-          "description":
-              "Ejercicio con peso corporal para fuerza y resistencia.",
-          "image": "assets/force/pushups.png",
-          "increase": 0.05,
-          "category": "Pecho"
-        },
-        {
-          "name": "Aperturas con mancuernas",
-          "description": "Trabaja los pectorales mayores con amplitud.",
-          "image": "assets/force/dumbbell_fly.png",
-          "increase": 0.06,
-          "category": "Pecho"
-        },
-        {
-          "name": "Dominadas",
-          "description": "Fortalece la espalda y los bíceps.",
-          "image": "assets/force/pullups.png",
-          "increase": 0.08,
-          "category": "Espalda"
-        },
-        {
-          "name": "Remo con barra",
-          "description": "Desarrolla la parte media de la espalda.",
-          "image": "assets/force/barbell_row.png",
-          "increase": 0.07,
-          "category": "Espalda"
-        },
-        {
-          "name": "Peso muerto",
-          "description": "Ejercicio compuesto que involucra toda la espalda.",
-          "image": "assets/force/deadlift.png",
-          "increase": 0.10,
-          "category": "Espalda"
-        },
-        {
-          "name": "Curl con barra",
-          "description": "Aumenta el tamaño y fuerza de los bíceps.",
-          "image": "assets/force/barbell_curl.png",
-          "increase": 0.06,
-          "category": "Bíceps"
-        },
-        {
-          "name": "Curl con mancuernas",
-          "description": "Permite un movimiento más natural y controlado.",
-          "image": "assets/force/dumbbell_curl.png",
-          "increase": 0.05,
-          "category": "Bíceps"
-        },
-        {
-          "name": "Martillo",
-          "description": "Trabaja el braquial y el antebrazo.",
-          "image": "assets/force/hammer_curl.png",
-          "increase": 0.05,
-          "category": "Bíceps"
-        },
-        {
-          "name": "Fondos en paralelas",
-          "description": "Ejercicio exigente para tríceps y pecho.",
-          "image": "assets/force/dips.png",
-          "increase": 0.08,
-          "category": "Tríceps"
-        },
-        {
-          "name": "Extensiones con cuerda",
-          "description": "Ideal para definir los tríceps.",
-          "image": "assets/force/tricep_rope.png",
-          "increase": 0.06,
-          "category": "Tríceps"
-        },
-        {
-          "name": "Press francés",
-          "description": "Enfoca el trabajo en el tríceps largo.",
-          "image": "assets/force/skullcrusher.png",
-          "increase": 0.07,
-          "category": "Tríceps"
-        },
-        {
-          "name": "Curl de muñeca",
-          "description": "Fortalece los músculos flexores del antebrazo.",
-          "image": "assets/force/wrist_curl.png",
-          "increase": 0.04,
-          "category": "Antebrazo"
-        },
-        {
-          "name": "Curl inverso",
-          "description":
-              "Trabaja extensores y parte superior del antebrazo.",
-          "image": "assets/force/reverse_curl.png",
-          "increase": 0.05,
-          "category": "Antebrazo"
-        },
-        {
-          "name": "Toalla hold",
-          "description": "Desarrolla la fuerza de agarre.",
-          "image": "assets/force/towel_hold.png",
-          "increase": 0.05,
-          "category": "Antebrazo"
-        },
-        {
-          "name": "Abdominales crunch",
-          "description":
-              "Ejercicio básico para la parte superior del abdomen.",
-          "image": "assets/force/crunch.png",
-          "increase": 0.04,
-          "category": "Abdomen"
-        },
-        {
-          "name": "Plancha",
-          "description": "Fortalece todo el core.",
-          "image": "assets/force/plank.png",
-          "increase": 0.05,
-          "category": "Abdomen"
-        },
-        {
-          "name": "Elevaciones de piernas",
-          "description": "Trabaja el abdomen inferior y la estabilidad.",
-          "image": "assets/force/leg_raise.png",
-          "increase": 0.06,
-          "category": "Abdomen"
-        },
-      ];
+      // 🔹 Pecho
+      {
+        "nameKey": "f_name1",
+        "descKey": "f_desc1",
+        "image": "assets/force/chest_press.png",
+        "increase": 0.07,
+        "category": "cat_chest",
+      },
+      {
+        "nameKey": "f_name2",
+        "descKey": "f_desc2",
+        "image": "assets/force/pushups.png",
+        "increase": 0.05,
+        "category": "cat_chest",
+      },
+      {
+        "nameKey": "f_name3",
+        "descKey": "f_desc3",
+        "image": "assets/force/dumbbell_fly.png",
+        "increase": 0.06,
+        "category": "cat_chest",
+      },
+
+      // 🔹 Espalda
+      {
+        "nameKey": "f_name4",
+        "descKey": "f_desc4",
+        "image": "assets/force/pullups.png",
+        "increase": 0.08,
+        "category": "cat_back",
+      },
+      {
+        "nameKey": "f_name5",
+        "descKey": "f_desc5",
+        "image": "assets/force/barbell_row.png",
+        "increase": 0.07,
+        "category": "cat_back",
+      },
+      {
+        "nameKey": "f_name6",
+        "descKey": "f_desc6",
+        "image": "assets/force/deadlift.png",
+        "increase": 0.10,
+        "category": "cat_back",
+      },
+
+      // 🔹 Bíceps
+      {
+        "nameKey": "f_name7",
+        "descKey": "f_desc7",
+        "image": "assets/force/barbell_curl.png",
+        "increase": 0.06,
+        "category": "cat_biceps",
+      },
+      {
+        "nameKey": "f_name8",
+        "descKey": "f_desc8",
+        "image": "assets/force/dumbbell_curl.png",
+        "increase": 0.05,
+        "category": "cat_biceps",
+      },
+      {
+        "nameKey": "f_name9",
+        "descKey": "f_desc9",
+        "image": "assets/force/hammer_curl.png",
+        "increase": 0.05,
+        "category": "cat_biceps",
+      },
+
+      // 🔹 Tríceps
+      {
+        "nameKey": "f_name10",
+        "descKey": "f_desc10",
+        "image": "assets/force/dips.png",
+        "increase": 0.08,
+        "category": "cat_triceps",
+      },
+      {
+        "nameKey": "f_name11",
+        "descKey": "f_desc11",
+        "image": "assets/force/tricep_rope.png",
+        "increase": 0.06,
+        "category": "cat_triceps",
+      },
+      {
+        "nameKey": "f_name12",
+        "descKey": "f_desc12",
+        "image": "assets/force/skullcrusher.png",
+        "increase": 0.07,
+        "category": "cat_triceps",
+      },
+
+      // 🔹 Antebrazo
+      {
+        "nameKey": "f_name13",
+        "descKey": "f_desc13",
+        "image": "assets/force/wrist_curl.png",
+        "increase": 0.04,
+        "category": "cat_forearm",
+      },
+      {
+        "nameKey": "f_name14",
+        "descKey": "f_desc14",
+        "image": "assets/force/reverse_curl.png",
+        "increase": 0.05,
+        "category": "cat_forearm",
+      },
+      {
+        "nameKey": "f_name15",
+        "descKey": "f_desc15",
+        "image": "assets/force/towel_hold.png",
+        "increase": 0.05,
+        "category": "cat_forearm",
+      },
+
+      // 🔹 Abdomen
+      {
+        "nameKey": "f_name16",
+        "descKey": "f_desc16",
+        "image": "assets/force/crunch.png",
+        "increase": 0.04,
+        "category": "cat_abs",
+      },
+      {
+        "nameKey": "f_name17",
+        "descKey": "f_desc17",
+        "image": "assets/force/plank.png",
+        "increase": 0.05,
+        "category": "cat_abs",
+      },
+      {
+        "nameKey": "f_name18",
+        "descKey": "f_desc18",
+        "image": "assets/force/leg_raise.png",
+        "increase": 0.06,
+        "category": "cat_abs",
+      },
+    ];
+
 
       if (doc.exists) {
         final data = doc.data() ?? {};
@@ -206,16 +258,31 @@ class _ForceScreenState extends State<ForceScreen> {
     }
   }
 
-  void _filterByCategory(String category) {
+  void _filterByCategory(String translatedCategory) {
+    final loc = AppLocalizations.of(context)!;
+
     setState(() {
-      selectedCategory = category;
-      displayedExercises =
-          allExercises.where((e) => e["category"] == category).toList();
+      selectedCategory = translatedCategory;
+
+      displayedExercises = allExercises.where((ex) {
+        final rawCategory = ex["category"];
+
+        // Caso 1: categoría con clave
+        if (rawCategory.toString().startsWith("cat_")) {
+          return tForce(loc, rawCategory) == translatedCategory;
+        }
+
+        // Caso 2: categoría personalizada (texto directo)
+        return rawCategory == translatedCategory;
+      }).toList();
     });
   }
 
+
+
   Future<void> _updateProgress(double increment) async {
     double newProgress = currentProgress + increment;
+    final loc = AppLocalizations.of(context)!;
     int earnedCoins = 0;
     if (newProgress >= 1.0) {
       earnedCoins = 100;
@@ -238,8 +305,8 @@ class _ForceScreenState extends State<ForceScreen> {
         SnackBar(
           content: Text(
             earnedCoins > 0
-                ? "🏋️‍♂️ ¡Increíble! Has ganado 100 puntos."
-                : "💪 ¡Excelente! Tu fuerza ha aumentado.",
+                ? loc.force_congrats
+                : loc.force_improved,
           ),
           backgroundColor:
               earnedCoins > 0 ? Colors.amber.shade700 : Colors.green,
@@ -254,6 +321,7 @@ class _ForceScreenState extends State<ForceScreen> {
     final nameController = TextEditingController();
     final descController = TextEditingController();
     final increaseController = TextEditingController();
+    final loc = AppLocalizations.of(context)!;
     String selected = selectedCategory;
 
     await showDialog(
@@ -261,29 +329,29 @@ class _ForceScreenState extends State<ForceScreen> {
       builder: (context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          title: const Text("Agregar nuevo ejercicio"),
+          title: Text(loc.force_add_title),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(controller: nameController, decoration: const InputDecoration(labelText: "Nombre del ejercicio")),
-                TextField(controller: descController, decoration: const InputDecoration(labelText: "Descripción")),
+                TextField(controller: nameController, decoration: InputDecoration(labelText: loc.force_add_name)),
+                TextField(controller: descController, decoration: InputDecoration(labelText: loc.force_add_desc)),
                 DropdownButtonFormField<String>(
                   value: selected,
-                  decoration: const InputDecoration(labelText: "Categoría muscular"),
+                  decoration: InputDecoration(labelText: loc.force_add_cat),
                   items: categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
                   onChanged: (value) => selected = value!,
                 ),
                 TextField(
                   controller: increaseController,
-                  decoration: const InputDecoration(labelText: "Aumento de progreso (0.01 - 0.2)"),
+                  decoration: InputDecoration(labelText: loc.force_add_inc),
                   keyboardType: TextInputType.number,
                 ),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancelar")),
+            TextButton(onPressed: () => Navigator.pop(context), child: Text(loc.btn_cancel)),
             ElevatedButton(
               onPressed: () async {
                 final name = nameController.text.trim();
@@ -310,7 +378,7 @@ class _ForceScreenState extends State<ForceScreen> {
 
                 if (context.mounted) Navigator.pop(context);
               },
-              child: const Text("Agregar"),
+              child: Text(loc.btn_add),
             ),
           ],
         );
@@ -322,6 +390,20 @@ class _ForceScreenState extends State<ForceScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final loc = AppLocalizations.of(context)!;
+
+    categories = [
+      loc.cat_chest,
+      loc.cat_back,
+      loc.cat_biceps,
+      loc.cat_triceps,
+      loc.cat_forearm,
+      loc.cat_abs,
+    ];
+
+    if (selectedCategory.isEmpty) {
+      selectedCategory = loc.cat_chest;
+    }
 
     if (_loading) {
       return Scaffold(
@@ -331,7 +413,7 @@ class _ForceScreenState extends State<ForceScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Entrenamiento de Fuerza"),
+        title: Text(loc.force_title),
         backgroundColor: colorScheme.primary.withOpacity(0.1),
         centerTitle: true,
       ),
@@ -356,7 +438,7 @@ class _ForceScreenState extends State<ForceScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Progreso de Fuerza",
+                      Text(loc.force_progress,
                           style: TextStyle(
                               color: colorScheme.primary,
                               fontWeight: FontWeight.bold,
@@ -377,7 +459,7 @@ class _ForceScreenState extends State<ForceScreen> {
                               color: colorScheme.onBackground,
                               fontWeight: FontWeight.w600)),
                       const SizedBox(height: 10),
-                      Text("Monedas: $userCoins 🪙",
+                      Text("${loc.coins}: $userCoins 🪙",
                           style: TextStyle(
                               color: colorScheme.secondary,
                               fontWeight: FontWeight.w600)),
@@ -418,6 +500,7 @@ class _ForceScreenState extends State<ForceScreen> {
 
             // 🔹 Lista de ejercicios SIN overflow
             ...displayedExercises.map((ex) {
+              final bool isBase = ex.containsKey("nameKey");
               return Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
@@ -441,17 +524,19 @@ class _ForceScreenState extends State<ForceScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(ex["name"],
-                                style: TextStyle(
-                                    color: colorScheme.primary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16)),
+                           Text(
+                              isBase ? tForce(loc, ex["nameKey"]) : ex["name"],
+                              style: TextStyle(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
                             const SizedBox(height: 4),
                             Text(
-                              ex["description"],
+                              isBase ? tForce(loc, ex["descKey"]) : ex["description"],
                               style: TextStyle(
-                                color: colorScheme.onBackground
-                                    .withOpacity(0.8),
+                                color: colorScheme.onBackground.withOpacity(0.8),
                               ),
                             ),
                           ],

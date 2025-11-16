@@ -1,6 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../l10n/app_localizations.dart';
+
+final Map<String, String Function(AppLocalizations loc)> strengthKeys = {
+  "r_name1": (loc) => loc.r_name1,
+  "r_description1": (loc) => loc.r_description1,
+  "r_name2": (loc) => loc.r_name2,
+  "r_description2": (loc) => loc.r_description2,
+  "r_name3": (loc) => loc.r_name3,
+  "r_description3": (loc) => loc.r_description3,
+  "r_name4": (loc) => loc.r_name4,
+  "r_description4": (loc) => loc.r_description4,
+};
+
+/// Traducción segura
+String t(AppLocalizations loc, String? key) {
+  if (key == null) return "";
+  return strengthKeys[key]?.call(loc) ?? key;
+}
 
 class StrengthScreen extends StatefulWidget {
   const StrengthScreen({super.key});
@@ -12,26 +30,26 @@ class StrengthScreen extends StatefulWidget {
 class _StrengthScreenState extends State<StrengthScreen> {
   List<Map<String, dynamic>> exercises = [
     {
-      "name": "Caminata intensa",
-      "description": "Camina a paso rápido durante 30 minutos.",
+      "nameKey": "r_name1",
+      "descKey": "r_description1",
       "image": "assets/exercises/walk.png",
       "increase": 0.05
     },
     {
-      "name": "Saltar la cuerda",
-      "description": "Realiza 3 sesiones de 2 minutos de salto.",
+      "nameKey": "r_name2",
+      "descKey": "r_description2",
       "image": "assets/exercises/jump_rope.png",
       "increase": 0.08
     },
     {
-      "name": "Ciclismo",
-      "description": "Andar en bicicleta durante 40 minutos a ritmo moderado.",
+      "nameKey": "r_name3",
+      "descKey": "r_description3",
       "image": "assets/exercises/cycling.png",
       "increase": 0.10
     },
     {
-      "name": "Subir escaleras",
-      "description": "Sube escaleras por 10 minutos sin parar.",
+      "nameKey": "r_name4",
+      "descKey": "r_description4",
       "image": "assets/exercises/stairs.png",
       "increase": 0.07
     },
@@ -57,8 +75,10 @@ class _StrengthScreenState extends State<StrengthScreen> {
 
   Future<void> _loadProgressAndExercises() async {
     try {
-      final doc =
-          await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
 
       if (doc.exists) {
         final data = doc.data() ?? {};
@@ -88,7 +108,10 @@ class _StrengthScreenState extends State<StrengthScreen> {
           .where((e) => e["image"] == "assets/exercises/custom.png")
           .toList();
 
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .update({
         'strengthExercises': customExercises,
       });
     } catch (e) {
@@ -99,6 +122,7 @@ class _StrengthScreenState extends State<StrengthScreen> {
   Future<void> _updateProgress(double increment) async {
     double newProgress = currentProgress + increment;
     int earnedCoins = 0;
+    final loc = AppLocalizations.of(context)!;
 
     if (newProgress >= 1.0) {
       earnedCoins = 100;
@@ -107,7 +131,6 @@ class _StrengthScreenState extends State<StrengthScreen> {
 
     try {
       final newCoins = userCoins + earnedCoins;
-
       await FirebaseFirestore.instance.collection('users').doc(userId).update({
         'strengthProgress': newProgress,
         'coins': newCoins,
@@ -121,10 +144,7 @@ class _StrengthScreenState extends State<StrengthScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            earnedCoins > 0
-                ? "🏆 ¡Felicidades! Has ganado 100 puntos."
-                : "🔥 ¡Excelente! Tu resistencia ha aumentado.",
-          ),
+              earnedCoins > 0 ? loc.congratulations : loc.excellent),
           backgroundColor:
               earnedCoins > 0 ? Colors.amber.shade700 : Colors.green,
         ),
@@ -138,32 +158,33 @@ class _StrengthScreenState extends State<StrengthScreen> {
     final nameController = TextEditingController();
     final descController = TextEditingController();
     final increaseController = TextEditingController();
+    final loc = AppLocalizations.of(context)!;
 
     await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          title: const Text("Agregar nuevo ejercicio"),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15)),
+          title: Text(loc.add),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: nameController,
-                  decoration:
-                      const InputDecoration(labelText: "Nombre del ejercicio"),
+                  decoration: InputDecoration(
+                      labelText: loc.name_add),
                 ),
                 TextField(
                   controller: descController,
                   decoration:
-                      const InputDecoration(labelText: "Descripción"),
+                      InputDecoration(labelText: loc.des_add),
                 ),
                 TextField(
                   controller: increaseController,
-                  decoration: const InputDecoration(
-                      labelText: "Aumento de progreso (0.01 - 0.2)"),
+                  decoration: InputDecoration(
+                      labelText: loc.aum_add),
                   keyboardType: TextInputType.number,
                 ),
               ],
@@ -172,12 +193,13 @@ class _StrengthScreenState extends State<StrengthScreen> {
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Cancelar")),
+                child: Text(loc.btn_cancel)),
             ElevatedButton(
               onPressed: () async {
                 final name = nameController.text.trim();
                 final desc = descController.text.trim();
-                final inc = double.tryParse(increaseController.text) ?? 0.05;
+                final inc =
+                    double.tryParse(increaseController.text) ?? 0.05;
 
                 if (name.isEmpty || desc.isEmpty) return;
 
@@ -188,14 +210,12 @@ class _StrengthScreenState extends State<StrengthScreen> {
                   "increase": inc.clamp(0.01, 0.2),
                 };
 
-                setState(() {
-                  exercises.add(newExercise);
-                });
+                setState(() => exercises.add(newExercise));
 
                 await _saveExercisesToFirestore();
                 Navigator.pop(context);
               },
-              child: const Text("Agregar"),
+              child: Text(loc.btn_add),
             ),
           ],
         );
@@ -207,6 +227,7 @@ class _StrengthScreenState extends State<StrengthScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final loc = AppLocalizations.of(context)!;
 
     if (_loading) {
       return Scaffold(
@@ -220,7 +241,7 @@ class _StrengthScreenState extends State<StrengthScreen> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: colorScheme.primary.withOpacity(0.1),
-        title: const Text("Entrenamiento de Resistencia"),
+        title: Text(loc.training),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
@@ -236,16 +257,14 @@ class _StrengthScreenState extends State<StrengthScreen> {
             Padding(
               padding: const EdgeInsets.all(16),
               child: Card(
-                color: theme.cardColor,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                    borderRadius: BorderRadius.circular(16)),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Progreso de Resistencia",
+                      Text(loc.progress_r,
                           style: TextStyle(
                               color: colorScheme.primary,
                               fontWeight: FontWeight.bold,
@@ -254,19 +273,14 @@ class _StrengthScreenState extends State<StrengthScreen> {
                       LinearProgressIndicator(
                         value: currentProgress,
                         minHeight: 12,
+                        backgroundColor: colorScheme.onSurface.withOpacity(0.1),
+                        valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
                         borderRadius: BorderRadius.circular(8),
-                        backgroundColor:
-                            colorScheme.onSurface.withOpacity(0.1),
-                        valueColor:
-                            AlwaysStoppedAnimation(colorScheme.primary),
                       ),
                       const SizedBox(height: 6),
-                      Text("${(currentProgress * 100).toStringAsFixed(1)}%",
-                          style: TextStyle(
-                              color: colorScheme.onBackground,
-                              fontWeight: FontWeight.w600)),
+                      Text("${(currentProgress * 100).toStringAsFixed(1)}%"),
                       const SizedBox(height: 10),
-                      Text("Monedaz: $userCoins 🪙",
+                      Text("${loc.coins}: $userCoins 🪙",
                           style: TextStyle(
                               color: colorScheme.secondary,
                               fontWeight: FontWeight.w600)),
@@ -276,32 +290,35 @@ class _StrengthScreenState extends State<StrengthScreen> {
               ),
             ),
 
-            // 🔹 Lista de ejercicios sin overflow
+            // 🔹 Lista de ejercicios
             ...exercises.map((item) {
+              final isTranslated = item.containsKey("nameKey");
+
               return Card(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                    borderRadius: BorderRadius.circular(16)),
                 elevation: 4,
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                margin: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 8),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.all(12),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       CircleAvatar(
                         backgroundImage: AssetImage(item["image"]),
                         radius: 28,
-                        backgroundColor:
-                            colorScheme.primary.withOpacity(0.1),
                       ),
                       const SizedBox(width: 12),
+
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
                           children: [
                             Text(
-                              item["name"],
+                              isTranslated
+                                  ? t(loc, item["nameKey"])
+                                  : item["name"],
                               style: TextStyle(
                                   color: colorScheme.primary,
                                   fontWeight: FontWeight.bold,
@@ -309,31 +326,31 @@ class _StrengthScreenState extends State<StrengthScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              item["description"],
+                              isTranslated
+                                  ? t(loc, item["descKey"])
+                                  : item["description"],
                               style: TextStyle(
-                                color: colorScheme.onBackground.withOpacity(0.8),
-                              ),
+                                  color: colorScheme.onBackground
+                                      .withOpacity(0.8)),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 8),
+
                       Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             "+${(item["increase"] * 100).toInt()}%",
                             style: const TextStyle(
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                            ),
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold),
                           ),
                           IconButton(
                             icon: const Icon(Icons.play_circle_fill,
                                 color: Colors.blueAccent, size: 28),
-                            onPressed: () => _updateProgress(item["increase"]),
-                          ),
+                            onPressed: () =>
+                                _updateProgress(item["increase"]),
+                          )
                         ],
                       ),
                     ],

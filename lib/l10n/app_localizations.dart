@@ -446,19 +446,19 @@ abstract class AppLocalizations {
   /// No description provided for @gripGloves.
   ///
   /// In en, this message translates to:
-  /// **'Pro Crown'**
+  /// **'Nitrotech performance'**
   String get gripGloves;
 
   /// No description provided for @powerBelt.
   ///
   /// In en, this message translates to:
-  /// **'Power Rug'**
+  /// **'Crea Bolic'**
   String get powerBelt;
 
   /// No description provided for @nonSlipBoots.
   ///
   /// In en, this message translates to:
-  /// **'Non-slip Boots'**
+  /// **'Rack'**
   String get nonSlipBoots;
 
   /// No description provided for @titanGold.
@@ -482,19 +482,19 @@ abstract class AppLocalizations {
   /// No description provided for @accessoryDescription1.
   ///
   /// In en, this message translates to:
-  /// **'Show your shine'**
+  /// **'Scientifically developed whey isolate formula.'**
   String get accessoryDescription1;
 
   /// No description provided for @accessoryDescription2.
   ///
   /// In en, this message translates to:
-  /// **'It flies through the air'**
+  /// **'Powder that combines isomaltulose and amino acids'**
   String get accessoryDescription2;
 
   /// No description provided for @accessoryDescription3.
   ///
   /// In en, this message translates to:
-  /// **'Control your life'**
+  /// **'Hexagonal Dumbbell Rack'**
   String get accessoryDescription3;
 
   /// No description provided for @avatarDescription1.
@@ -682,6 +682,504 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Plan a new event'**
   String get planEvent;
+
+  /// No description provided for @training.
+  ///
+  /// In en, this message translates to:
+  /// **'Resistance training'**
+  String get training;
+
+  /// No description provided for @progress_r.
+  ///
+  /// In en, this message translates to:
+  /// **'Resistance progress'**
+  String get progress_r;
+
+  /// No description provided for @congratulations.
+  ///
+  /// In en, this message translates to:
+  /// **'🏆 Congratulations! You have earned 100 points'**
+  String get congratulations;
+
+  /// No description provided for @excellent.
+  ///
+  /// In en, this message translates to:
+  /// **'🔥 Excellent! Your stamina has increased'**
+  String get excellent;
+
+  /// No description provided for @r_name1.
+  ///
+  /// In en, this message translates to:
+  /// **'Strenuous hike'**
+  String get r_name1;
+
+  /// No description provided for @r_name2.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipping rope'**
+  String get r_name2;
+
+  /// No description provided for @r_name3.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycling'**
+  String get r_name3;
+
+  /// No description provided for @r_name4.
+  ///
+  /// In en, this message translates to:
+  /// **'Go up stairs'**
+  String get r_name4;
+
+  /// No description provided for @r_description1.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk briskly for 30 minutes'**
+  String get r_description1;
+
+  /// No description provided for @r_description2.
+  ///
+  /// In en, this message translates to:
+  /// **'Perform 3 sets of 2 minutes of jumping'**
+  String get r_description2;
+
+  /// No description provided for @r_description3.
+  ///
+  /// In en, this message translates to:
+  /// **'Cycle for 40 minutes at a moderate pace'**
+  String get r_description3;
+
+  /// No description provided for @r_description4.
+  ///
+  /// In en, this message translates to:
+  /// **'Climb stairs for 10 minutes without stopping'**
+  String get r_description4;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new exercise'**
+  String get add;
+
+  /// No description provided for @name_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise Name'**
+  String get name_add;
+
+  /// No description provided for @des_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get des_add;
+
+  /// No description provided for @aum_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress increase (0.01 - 0.2)'**
+  String get aum_add;
+
+  /// No description provided for @btn_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get btn_add;
+
+  /// No description provided for @btn_cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get btn_cancel;
+
+  /// No description provided for @nutrition_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition Plans'**
+  String get nutrition_title;
+
+  /// No description provided for @nutrition_progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition Progress'**
+  String get nutrition_progress;
+
+  /// No description provided for @diet_name1.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced Diet'**
+  String get diet_name1;
+
+  /// No description provided for @diet_desc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Includes fruits, vegetables, lean proteins and whole grains.'**
+  String get diet_desc1;
+
+  /// No description provided for @diet_name2.
+  ///
+  /// In en, this message translates to:
+  /// **'High Protein'**
+  String get diet_name2;
+
+  /// No description provided for @diet_desc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on lean meats, legumes and eggs. Ideal for muscle growth.'**
+  String get diet_desc2;
+
+  /// No description provided for @diet_name3.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy Vegan'**
+  String get diet_name3;
+
+  /// No description provided for @diet_desc3.
+  ///
+  /// In en, this message translates to:
+  /// **'Focused on plant foods rich in fiber and antioxidants.'**
+  String get diet_desc3;
+
+  /// No description provided for @diet_name4.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Calorie Definition'**
+  String get diet_name4;
+
+  /// No description provided for @diet_desc4.
+  ///
+  /// In en, this message translates to:
+  /// **'Designed to reduce fat while preserving muscle masa.'**
+  String get diet_desc4;
+
+  /// No description provided for @nutrition_improved.
+  ///
+  /// In en, this message translates to:
+  /// **'🥗 Great! Your nutrition progress has improved.'**
+  String get nutrition_improved;
+
+  /// No description provided for @nutrition_congrats.
+  ///
+  /// In en, this message translates to:
+  /// **'🎉 Congratulations! You earned 100 points for your nutrition progress.'**
+  String get nutrition_congrats;
+
+  /// No description provided for @nutrition_add_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Diet'**
+  String get nutrition_add_title;
+
+  /// No description provided for @nutrition_add_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Diet Name'**
+  String get nutrition_add_name;
+
+  /// No description provided for @cat_chest.
+  ///
+  /// In en, this message translates to:
+  /// **'Chest'**
+  String get cat_chest;
+
+  /// No description provided for @cat_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get cat_back;
+
+  /// No description provided for @cat_biceps.
+  ///
+  /// In en, this message translates to:
+  /// **'Biceps'**
+  String get cat_biceps;
+
+  /// No description provided for @cat_triceps.
+  ///
+  /// In en, this message translates to:
+  /// **'Triceps'**
+  String get cat_triceps;
+
+  /// No description provided for @cat_forearm.
+  ///
+  /// In en, this message translates to:
+  /// **'Forearm'**
+  String get cat_forearm;
+
+  /// No description provided for @cat_abs.
+  ///
+  /// In en, this message translates to:
+  /// **'Abdomen'**
+  String get cat_abs;
+
+  /// No description provided for @force_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength Training'**
+  String get force_title;
+
+  /// No description provided for @force_progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Strength Progress'**
+  String get force_progress;
+
+  /// No description provided for @force_add_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Exercise'**
+  String get force_add_title;
+
+  /// No description provided for @force_add_name.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise Name'**
+  String get force_add_name;
+
+  /// No description provided for @force_add_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get force_add_desc;
+
+  /// No description provided for @force_add_cat.
+  ///
+  /// In en, this message translates to:
+  /// **'Muscle Category'**
+  String get force_add_cat;
+
+  /// No description provided for @force_add_inc.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress Increment (0.01 - 0.2)'**
+  String get force_add_inc;
+
+  /// No description provided for @force_congrats.
+  ///
+  /// In en, this message translates to:
+  /// **'🏋️‍♂️ Incredible! You\'ve earned 100 points.'**
+  String get force_congrats;
+
+  /// No description provided for @force_improved.
+  ///
+  /// In en, this message translates to:
+  /// **'💪 Excellent! Your strength has increased.'**
+  String get force_improved;
+
+  /// No description provided for @f_name1.
+  ///
+  /// In en, this message translates to:
+  /// **'Bench Press'**
+  String get f_name1;
+
+  /// No description provided for @f_desc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic exercise for developing the chest.'**
+  String get f_desc1;
+
+  /// No description provided for @f_name2.
+  ///
+  /// In en, this message translates to:
+  /// **'Push-ups'**
+  String get f_name2;
+
+  /// No description provided for @f_desc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Bodyweight exercise for strength and endurance.'**
+  String get f_desc2;
+
+  /// No description provided for @f_name3.
+  ///
+  /// In en, this message translates to:
+  /// **'Dumbbell Flyes'**
+  String get f_name3;
+
+  /// No description provided for @f_desc3.
+  ///
+  /// In en, this message translates to:
+  /// **'Works the pectoralis major muscles with a wide range of motion.'**
+  String get f_desc3;
+
+  /// No description provided for @f_name4.
+  ///
+  /// In en, this message translates to:
+  /// **'Pull-ups'**
+  String get f_name4;
+
+  /// No description provided for @f_desc4.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengthens the back and biceps.'**
+  String get f_desc4;
+
+  /// No description provided for @f_name5.
+  ///
+  /// In en, this message translates to:
+  /// **'Barbell row'**
+  String get f_name5;
+
+  /// No description provided for @f_desc5.
+  ///
+  /// In en, this message translates to:
+  /// **'Develops the mid-back.'**
+  String get f_desc5;
+
+  /// No description provided for @f_name6.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadlift'**
+  String get f_name6;
+
+  /// No description provided for @f_desc6.
+  ///
+  /// In en, this message translates to:
+  /// **'Compound exercise that engages the entire back.'**
+  String get f_desc6;
+
+  /// No description provided for @f_name7.
+  ///
+  /// In en, this message translates to:
+  /// **'Barbell curl'**
+  String get f_name7;
+
+  /// No description provided for @f_desc7.
+  ///
+  /// In en, this message translates to:
+  /// **'Increases bicep size and strength.'**
+  String get f_desc7;
+
+  /// No description provided for @f_name8.
+  ///
+  /// In en, this message translates to:
+  /// **'Dumbbell curl'**
+  String get f_name8;
+
+  /// No description provided for @f_desc8.
+  ///
+  /// In en, this message translates to:
+  /// **'Allows for a more natural and controlled movement.'**
+  String get f_desc8;
+
+  /// No description provided for @f_name9.
+  ///
+  /// In en, this message translates to:
+  /// **'Hammer curl'**
+  String get f_name9;
+
+  /// No description provided for @f_desc9.
+  ///
+  /// In en, this message translates to:
+  /// **'Works the brachialis and forearm.'**
+  String get f_desc9;
+
+  /// No description provided for @f_name10.
+  ///
+  /// In en, this message translates to:
+  /// **'Parallel Bar Dips'**
+  String get f_name10;
+
+  /// No description provided for @f_desc10.
+  ///
+  /// In en, this message translates to:
+  /// **'A demanding exercise for triceps and chest.'**
+  String get f_desc10;
+
+  /// No description provided for @f_name11.
+  ///
+  /// In en, this message translates to:
+  /// **'Rope Extensions'**
+  String get f_name11;
+
+  /// No description provided for @f_desc11.
+  ///
+  /// In en, this message translates to:
+  /// **'Ideal for defining the triceps.'**
+  String get f_desc11;
+
+  /// No description provided for @f_name12.
+  ///
+  /// In en, this message translates to:
+  /// **'French Press'**
+  String get f_name12;
+
+  /// No description provided for @f_desc12.
+  ///
+  /// In en, this message translates to:
+  /// **'Focuses on the long head of the triceps.'**
+  String get f_desc12;
+
+  /// No description provided for @f_name13.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrist Curl'**
+  String get f_name13;
+
+  /// No description provided for @f_desc13.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengthens the forearm flexor muscles.'**
+  String get f_desc13;
+
+  /// No description provided for @f_name14.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Curl'**
+  String get f_name14;
+
+  /// No description provided for @f_desc14.
+  ///
+  /// In en, this message translates to:
+  /// **'Works extensors and the upper part of the forearm.'**
+  String get f_desc14;
+
+  /// No description provided for @f_name15.
+  ///
+  /// In en, this message translates to:
+  /// **'Towel Hold'**
+  String get f_name15;
+
+  /// No description provided for @f_desc15.
+  ///
+  /// In en, this message translates to:
+  /// **'Develops grip strength.'**
+  String get f_desc15;
+
+  /// No description provided for @f_name16.
+  ///
+  /// In en, this message translates to:
+  /// **'Abdominal Crunches'**
+  String get f_name16;
+
+  /// No description provided for @f_desc16.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic exercise for the upper abs.'**
+  String get f_desc16;
+
+  /// No description provided for @f_name17.
+  ///
+  /// In en, this message translates to:
+  /// **'Plank'**
+  String get f_name17;
+
+  /// No description provided for @f_desc17.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengthens the entire core.'**
+  String get f_desc17;
+
+  /// No description provided for @f_name18.
+  ///
+  /// In en, this message translates to:
+  /// **'Leg raises'**
+  String get f_name18;
+
+  /// No description provided for @f_desc18.
+  ///
+  /// In en, this message translates to:
+  /// **'Works the lower abs and stability.'**
+  String get f_desc18;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

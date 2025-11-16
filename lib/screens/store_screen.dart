@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../providers/theme_provider.dart';
 import '../l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StoreScreen extends StatefulWidget {
   const StoreScreen({super.key});
@@ -22,7 +23,7 @@ class _StoreScreenState extends State<StoreScreen>
   int userCoins = 0;
   bool _isLoading = true;
   List<String> ownedItems = [];
-  String currentLevel = "Recluta";
+  String currentLevel = "recruit";
 
   @override
   void initState() {
@@ -48,7 +49,7 @@ class _StoreScreenState extends State<StoreScreen>
         setState(() {
           userCoins = data['coins'] ?? 0;
           ownedItems = List<String>.from(data['ownedItems'] ?? []);
-          currentLevel = (data['level'] ?? 'Recluta').toString();
+          currentLevel = (data['level'] ?? 'recruit').toString();
           _isLoading = false;
         });
       }
@@ -150,24 +151,27 @@ class _StoreScreenState extends State<StoreScreen>
     final accessories = [
       {
         'id': 'gripGloves',
-        'name': '👑 ${loc.gripGloves}',
+        'name': loc.gripGloves,
         'price': 250,
         'image': 'assets/store/gloves.png',
         'description': loc.accessoryDescription1,
+        'url': 'https://miproteina.com.co/muscletech/nitrotech-performance/',
       },
       {
         'id': 'powerBelt',
-        'name': '🧞 ${loc.powerBelt}',
+        'name': loc.powerBelt,
         'price': 500,
         'image': 'assets/store/belt.png',
         'description': loc.accessoryDescription2,
+        'url': 'https://nutrafitcolombia.com/producto/crea-bolic-300-gramos-inside-nutrition/',
       },
       {
         'id': 'nonSlipBoots',
-        'name': '🎮 ${loc.nonSlipBoots}',
+        'name': loc.nonSlipBoots,
         'price': 300,
         'image': 'assets/store/boots.png',
         'description': loc.accessoryDescription3,
+        'url': 'https://sportfitness.co/products/rack-para-mancuernas-hexagonales-sportfitness',
       },
     ];
 
@@ -351,8 +355,67 @@ class _StoreScreenState extends State<StoreScreen>
         buttonColor = colorScheme.primary;
       }
     } else {
-      buttonText = alreadyOwned ? loc.purchaseCompleted : loc.buy;
-      buttonColor = alreadyOwned ? Colors.grey : colorScheme.primary;
+      return Card(
+        color: isDark ? const Color(0xFF1E1E24) : Colors.grey.shade100,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        elevation: 6,
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Image.asset(
+                  item['image'],
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                item['name'],
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: colorScheme.primary,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Flexible(
+                child: Text(
+                  item['description'],
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: colorScheme.onBackground.withOpacity(0.7),
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              /// 🔹 Botón NUEVO que abre un sitio web
+              ElevatedButton(
+                onPressed: () {
+                  final url = item['url'];
+                  if (url != null) {
+                    launchUrl(Uri.parse(url));
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text("👀"),
+              ),
+            ],
+          ),
+        ),
+      );
     }
 
     return Card(
@@ -471,8 +534,8 @@ class _StoreScreenState extends State<StoreScreen>
     final id = item['id'];
 
     if (active) {
-      await _updateUserData(level: 'Recluta');
-      setState(() => currentLevel = 'Recluta');
+      await _updateUserData(level: 'recruit');
+      setState(() => currentLevel = 'recruit');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("${item['name']} ${loc.deactivated}"),
