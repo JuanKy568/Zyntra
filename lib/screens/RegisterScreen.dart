@@ -24,7 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _selectedLevel = 'Recluta';
   bool _isLoading = false;
 
-  /// 🔹 Guarda los datos del usuario en Firestore
+  /// 🔹 GUARDAR USUARIO EN FIRESTORE
   Future<void> _saveUserData({
     required String name,
     required String age,
@@ -42,22 +42,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'weight': double.tryParse(weight) ?? 0.0,
         'level': level,
         'email': user.email,
-        'coins': 0, // 💰 Monedas iniciales
-        'ownedItems': <String>[], // 🎒 Accesorios
-        'strengthExercises': <Map<String, dynamic>>[], // 🏋️‍♂️ Resistencia
-        'nutritionPlans': <Map<String, dynamic>>[], // 🥗 Dietas
-        'forceExercises': <Map<String, dynamic>>[], // 💪 Fuerza
+
+        // --------------------
+        // CAMPOS DE LA APP
+        // --------------------
+        'coins': 0,
+        'ownedItems': <String>[],
+        'strengthExercises': <Map<String, dynamic>>[],
+        'nutritionPlans': <Map<String, dynamic>>[],
+        'forceExercises': <Map<String, dynamic>>[],
         'strengthProgress': 0.0,
         'nutritionProgress': 0.0,
         'forceProgress': 0.0,
-        // 🗓️ Campo nuevo: lista vacía de eventos planificados
         'events': <Map<String, dynamic>>[],
+
+        // --------------------
+        // CAMPOS PARA AMIGOS
+        // --------------------
+        'friends': <String>[],               // Lista final de amigos
+        'friendRequestsSent': <String>[],    // Solicitudes enviadas
+        'friendRequestsReceived': <String>[],// Solicitudes recibidas
+
         'createdAt': FieldValue.serverTimestamp(),
       });
     }
   }
 
-  /// 🔹 Registro del usuario con validaciones
+  /// 🔹 REGISTRAR USUARIO
   Future<void> _register() async {
     final loc = AppLocalizations.of(context)!;
 
@@ -80,7 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         password: _passwordController.text.trim(),
       );
 
-      // 🔹 Guardar datos en Firestore
+      // 🔹 Guardar en Firestore
       await _saveUserData(
         name: _nameController.text.trim(),
         age: _ageController.text.trim(),
@@ -212,9 +223,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       decoration: InputDecoration(
                         labelText: loc.trainingLevel,
                         filled: true,
-                        fillColor: isDark
-                            ? const Color(0xFF1A1A1F)
-                            : Colors.grey.shade200,
+                        fillColor:
+                            isDark ? const Color(0xFF1A1A1F) : Colors.grey.shade200,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

@@ -182,5 +182,20 @@
   "f_name17": "Plancha",
   "f_desc17": "Fortalece todo el core.",
   "f_name18": "Elevaciones de piernas",
-  "f_desc18": "Trabaja el abdomen inferior y la estabilidad."
+  "f_desc18": "Trabaja el abdomen inferior y la estabilidad.",
+  "friends": "Amigos",
+  "yourFriends": "Tus amigos",
+  "noFriendsYet": "Aún no tienes amigos",
+  "removeFriend": "Eliminar",
+  "uno": "No hay usuarios para mostrar",
+  "dos": "Solicitud enviada",
+  "users": "Usuarios",
+  "requests": "Solicitudes",
+  "noUsersAvailable": "No hay usuarios para mostrar",
+  "error": "Error",
+  "requestSent": "Solicitud enviada",
+  "tres": "Solicitudes de amistad",
+  "cua": "No tienes solicitudes pendientes",
+  "six": "Solicitud aceptada",
+  "sev": "Solicitud rechazada"
 }

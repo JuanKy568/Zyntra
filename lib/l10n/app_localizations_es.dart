@@ -554,4 +554,49 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get f_desc18 => 'Trabaja el abdomen inferior y la estabilidad.';
+
+  @override
+  String get friends => 'Amigos';
+
+  @override
+  String get yourFriends => 'Tus amigos';
+
+  @override
+  String get noFriendsYet => 'Aún no tienes amigos';
+
+  @override
+  String get removeFriend => 'Eliminar';
+
+  @override
+  String get uno => 'No hay usuarios para mostrar';
+
+  @override
+  String get dos => 'Solicitud enviada';
+
+  @override
+  String get users => 'Usuarios';
+
+  @override
+  String get requests => 'Solicitudes';
+
+  @override
+  String get noUsersAvailable => 'No hay usuarios para mostrar';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get requestSent => 'Solicitud enviada';
+
+  @override
+  String get tres => 'Solicitudes de amistad';
+
+  @override
+  String get cua => 'No tienes solicitudes pendientes';
+
+  @override
+  String get six => 'Solicitud aceptada';
+
+  @override
+  String get sev => 'Solicitud rechazada';
 }

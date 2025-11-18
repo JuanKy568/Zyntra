@@ -182,5 +182,20 @@
   "f_name17": "Plank",
   "f_desc17": "Strengthens the entire core.",
   "f_name18": "Leg raises",
-  "f_desc18": "Works the lower abs and stability."
+  "f_desc18": "Works the lower abs and stability.",
+  "friends": "Friends",
+  "yourFriends": "Your Friends",
+  "noFriendsYet": "You have no friends yet",
+  "removeFriend": "Remove",
+  "uno": "There are no users to display",
+  "dos": "Application sent",
+  "users": "Users",
+  "requests": "Requests",
+  "noUsersAvailable": "No users available",
+  "error": "Error",
+  "requestSent": "Request sent",
+  "tres": "Friend requests",
+  "cua": "You have no pending applications",
+  "six": "Application accepted",
+  "sev": "Request rejected"
 }

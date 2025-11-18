@@ -1180,6 +1180,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Works the lower abs and stability.'**
   String get f_desc18;
+
+  /// No description provided for @friends.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get friends;
+
+  /// No description provided for @yourFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Friends'**
+  String get yourFriends;
+
+  /// No description provided for @noFriendsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no friends yet'**
+  String get noFriendsYet;
+
+  /// No description provided for @removeFriend.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removeFriend;
+
+  /// No description provided for @uno.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no users to display'**
+  String get uno;
+
+  /// No description provided for @dos.
+  ///
+  /// In en, this message translates to:
+  /// **'Application sent'**
+  String get dos;
+
+  /// No description provided for @users.
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get users;
+
+  /// No description provided for @requests.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get requests;
+
+  /// No description provided for @noUsersAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No users available'**
+  String get noUsersAvailable;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @requestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent'**
+  String get requestSent;
+
+  /// No description provided for @tres.
+  ///
+  /// In en, this message translates to:
+  /// **'Friend requests'**
+  String get tres;
+
+  /// No description provided for @cua.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no pending applications'**
+  String get cua;
+
+  /// No description provided for @six.
+  ///
+  /// In en, this message translates to:
+  /// **'Application accepted'**
+  String get six;
+
+  /// No description provided for @sev.
+  ///
+  /// In en, this message translates to:
+  /// **'Request rejected'**
+  String get sev;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

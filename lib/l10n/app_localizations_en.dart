@@ -554,4 +554,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get f_desc18 => 'Works the lower abs and stability.';
+
+  @override
+  String get friends => 'Friends';
+
+  @override
+  String get yourFriends => 'Your Friends';
+
+  @override
+  String get noFriendsYet => 'You have no friends yet';
+
+  @override
+  String get removeFriend => 'Remove';
+
+  @override
+  String get uno => 'There are no users to display';
+
+  @override
+  String get dos => 'Application sent';
+
+  @override
+  String get users => 'Users';
+
+  @override
+  String get requests => 'Requests';
+
+  @override
+  String get noUsersAvailable => 'No users available';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get requestSent => 'Request sent';
+
+  @override
+  String get tres => 'Friend requests';
+
+  @override
+  String get cua => 'You have no pending applications';
+
+  @override
+  String get six => 'Application accepted';
+
+  @override
+  String get sev => 'Request rejected';
 }

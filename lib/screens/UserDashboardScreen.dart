@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'chat_screen.dart';
 import '../l10n/app_localizations.dart';
 import 'progress_screen.dart';
+import 'screen_friends.dart';
 
 
 class UserDashboardScreen extends StatefulWidget {
@@ -318,18 +319,35 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                       context,
                       MaterialPageRoute(builder: (_) => const StoreScreen()),
                     );
-                    await _loadUserData(); // 🔄 recargar tras comprar
+                    await _loadUserData();
                   },
                 ),
-                _buildActionButton(Icons.settings, loc.settings, () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                  );
-                  if (result == true) await _loadUserData();
-                }),
+                _buildActionButton(
+                  Icons.settings,
+                  loc.settings,
+                  () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                    );
+                    if (result == true) await _loadUserData();
+                  },
+                ),
+
+                // ⭐ NUEVO BOTÓN DE AMIGOS ⭐
+                _buildActionButton(
+                  Icons.group,
+                  loc.friends,
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const FriendsScreen()),
+                    );
+                  },
+                ),
               ],
             ),
+
 
             const SizedBox(height: 30),
             ElevatedButton.icon(
